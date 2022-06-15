@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from numpy import *
 import os
+from shapely.geometry import Polygon
 
 #clear eveyrthing
 clear = lambda: os.system('cls')
@@ -19,23 +20,37 @@ clear()
 img = Image.open('download.png').convert('L')
 img.save('greyscale.png')
 np_img = np.array(img)
-#print(np_img.shape)
+#print(np_img)
 
-'''Operations'''
-total_brightness = sum(np_img)
-brightness_percent = np.zeros((np_img.shape[0],np_img.shape[1]))
+'''initialize coordinate system'''
+height = 0.1    #meter, acrylic block height
+width = 0.1    #meter, acrylic block width
+A_t = height*width  #total_area
+x = np.linspace(0,width,np_img.shape[0]+1)
+y = np.linspace(0,height,np_img.shape[1]+1)
+#print(len(x))
+xv, yv = np.meshgrid(x, y)  
+#print(xv)       
+#xv,yv [0] and [-1] must not be touched as they are specified by the actual h/w
 
-for i in range(0,np_img.shape[0]):
-    for j in range(0,np_img.shape[1]):
-        brightness_percent[i,j] = np_img[i,j]/total_brightness
+def area(i,j):
+    '''the area of the i th, j th polygon'''
+    x=[xv[i,j],xv[i+1,j],xv[i+1,j+1],xv[i,j+1]]
+    y=[yv[i,j],yv[i+1,j],yv[i+1,j+1],yv[i,j+1]]
+    shape = Polygon(zip(x, y))
+    return shape.area
 
-# ?????????????????????/
+print(area(1,1))
+
+'''Image Processing'''
+total_brightness = np.sum(np_img)
+#print(total_brightness)
+brightness_comp = np.array(img)/total_brightness
+#print(brightness_comp)
 
 #initialize grid
 grid = np.zeros((np_img.shape[0],np_img.shape[1]))
 cell_num = grid.shape[0]*grid.shape[1]
-height = 0.1    #meter
-width = 0.1    #meter
 A_t = height * width 
 grid = grid + A_t/cell_num  #uniform grid
 
@@ -50,8 +65,8 @@ def cost(a,b):
                 sum += (a[i,j]-b[i,j])**2
         return sum
 
-loss = grid - brightness_percent
-grad = np.array(np.gradient(loss,0.1/brightness_percent.shape[0]))
+loss = grid - brightness_comp
+grad = np.array(np.gradient(loss,0.1/brightness_comp.shape[0]))
 print(grad.shape)
 
 # u = np.zeros((183,276))
