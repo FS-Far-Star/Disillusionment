@@ -14,7 +14,12 @@ from numpy import *
 img = Image.open('D:\GitHub\Disillusionment\download.jpg').convert('L')
 img.save('greyscale.png')
 np_img = np.array(img)
-#print(np_img)
+#print(np_img.shape)
+
+'''Operations'''
+for i in range(0,np_img.shape[0]):
+    for j in range(0,np_img.shape[1]):
+        np_img[i,j] = np_img[i,j] - 100
 
 # Array back to image
 Image.fromarray(np_img).show()
