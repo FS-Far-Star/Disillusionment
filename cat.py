@@ -31,7 +31,7 @@ y = np.linspace(0,height,np_img.shape[1]+1)
 #print(len(x))
 xv, yv = np.meshgrid(x, y)  
 #print(xv)       
-#xv,yv [0] and [-1] must not be touched as they are specified by the actual h/w
+
 
 def area(i,j):
     '''the area of the i th, j th polygon'''
@@ -39,20 +39,18 @@ def area(i,j):
     y=[yv[i,j],yv[i+1,j],yv[i+1,j+1],yv[i,j+1]]
     shape = Polygon(zip(x, y))
     return shape.area
-
-print(area(1,1))
+#print(area(1,1))
+area_grid = np.zeros((np_img.shape[0],np_img.shape[1]))
+for i in range(0,np_img.shape[0]):
+    for j in range(0,np_img.shape[1]):
+        area_grid[i,j] = area(i,j)/A_t
+#print(area_grid)
 
 '''Image Processing'''
 total_brightness = np.sum(np_img)
 #print(total_brightness)
 brightness_comp = np.array(img)/total_brightness
 #print(brightness_comp)
-
-#initialize grid
-grid = np.zeros((np_img.shape[0],np_img.shape[1]))
-cell_num = grid.shape[0]*grid.shape[1]
-A_t = height * width 
-grid = grid + A_t/cell_num  #uniform grid
 
 #cost function
 def cost(a,b):
@@ -65,9 +63,11 @@ def cost(a,b):
                 sum += (a[i,j]-b[i,j])**2
         return sum
 
-loss = grid - brightness_comp
-grad = np.array(np.gradient(loss,0.1/brightness_comp.shape[0]))
-print(grad.shape)
+loss = area_grid - brightness_comp
+grad = np.array(np.gradient(loss,width/brightness_comp.shape[0]))
+print(cost(area_grid,brightness_comp))
+
+
 
 # u = np.zeros((183,276))
 # v = np.zeros((183,276))
