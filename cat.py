@@ -20,7 +20,12 @@ clear()
 img = Image.open('download.png').convert('L')
 img.save('greyscale.png')
 np_img = np.array(img)
-#print(np_img)
+np_img = np.rot90(np_img, 2)
+np_img = np.fliplr(np_img)
+print(np_img)
+
+# Array back to image
+#Image.fromarray(np_img).show()
 
 '''initialize coordinate system'''
 height = 0.1    #meter, acrylic block height
@@ -30,8 +35,8 @@ x = np.linspace(0,width,np_img.shape[0]+1)
 y = np.linspace(0,height,np_img.shape[1]+1)
 #print(len(x))
 xv, yv = np.meshgrid(x, y)  
-#print(xv)       
-
+# print(xv)
+# print(yv)
 
 def area(i,j):
     '''the area of the i th, j th polygon'''
@@ -64,8 +69,14 @@ def cost(a,b):
         return sum
 
 loss = area_grid - brightness_comp
-grad = np.array(np.gradient(loss,width/brightness_comp.shape[0]))
-print(cost(area_grid,brightness_comp))
+# grad = np.array(np.gradient(loss,width/brightness_comp.shape[0]))
+
+x = np.linspace(0,width,np_img.shape[0])
+y = np.linspace(0,height,np_img.shape[1])
+a,b = np.meshgrid(x, y)
+plt.pcolormesh(a,b,np_img) 
+
+#print(cost(area_grid,brightness_comp))
 
 
 
@@ -88,5 +99,4 @@ print(cost(area_grid,brightness_comp))
 # direction = math.sqrt(loss)
 
 
-# Array back to image
-#Image.fromarray(loss).show()
+
