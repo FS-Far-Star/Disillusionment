@@ -18,7 +18,7 @@ def area(i,j,xv,yv):
     x=[xv[i,j],xv[i+1,j],xv[i+1,j+1],xv[i,j+1]]
     y=[yv[i,j],yv[i+1,j],yv[i+1,j+1],yv[i,j+1]]
     shape = Polygon(zip(x, y))
-    return shape.area
+    return abs(shape.area)
 
 
 #cost function

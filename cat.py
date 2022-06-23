@@ -79,7 +79,7 @@ print(np.amax(abs(loss)))
 # plt.pcolormesh(a,b,loss)
 # plt.show()
 data =[]
-for calculation in range(1,10):
+for calculation in range(1,200):
     '''solve poisson'''
     phi = solve_poisson(phi,loss,100)
     
@@ -102,8 +102,8 @@ for calculation in range(1,10):
     # plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
     # plt.show()
     
-    xv[0:-1,0:-1] += delta_x*2
-    yv[0:-1,0:-1] += delta_y*2
+    xv[1:-1,1:-1] += delta_x[1:,1:]
+    yv[1:-1,1:-1] += delta_y[1:,1:]
 
     for i in range(0,np_img.shape[0]):
         for j in range(0,np_img.shape[1]):
@@ -112,7 +112,7 @@ for calculation in range(1,10):
     print(np.amax(abs(loss)))
     loss = area_grid - brightness_comp
 
-    data.append((loss,calculation))
+    data.append((calculation,(cost(area_grid,brightness_comp))))
     # plt.pcolormesh(a,b,loss)
     # plt.show()
 
@@ -124,12 +124,12 @@ plt.title('phi as 3d height map')
 
 # grid
 fig2 = plt.figure()
-plt.plot(xv,yv)
+plt.plot(xv[0:-1:10,0:-1:10],yv[0:-1:10,0:-1:10])
 ax = plt.gca() 
 ax.set_aspect(1)
 
 fig3 = plt.figure()
-plt.plot(zip(*data))
+plt.plot(*zip(*data))
 plt.show()
 
 
