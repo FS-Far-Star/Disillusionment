@@ -79,9 +79,9 @@ print(np.amax(abs(loss)))
 # plt.pcolormesh(a,b,loss)
 # plt.show()
 data =[]
-for calculation in range(1,200):
+for calculation in range(1,101):
     '''solve poisson'''
-    phi = solve_poisson(phi,loss,100)
+    phi = solve_poisson(phi,loss,200)
     
     # colormap
     # plt1 = plt.pcolormesh(a,b,phi)
@@ -95,21 +95,39 @@ for calculation in range(1,200):
 
     '''morph grid'''
     grad = np.gradient(phi,spacing)
-    delta_x = -grad[0]*spacing
-    delta_y = -grad[1]*spacing
+    delta_x = grad[0]*spacing
+    delta_y = grad[1]*spacing
 
     # Plot vector field
-    # plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
+    plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
+    #plt.quiver(a,b,delta_x,delta_y)
+    ax = plt.gca() 
+    ax.set_aspect(1)
     # plt.show()
     
-    xv[1:-1,1:-1] += delta_x[1:,1:]
-    yv[1:-1,1:-1] += delta_y[1:,1:]
+    # print(xv.shape)
+    # print(delta_x.shape)
+    xv[1:-1,1:-1] -= delta_x[1:,1:]
+    yv[1:-1,1:-1] -= delta_y[1:,1:]
 
+    #check
+    # for i in range(1,np_img.shape[0]):
+    #     for j in range(1,np_img.shape[1]):
+    #         if xv[i,j] < xv[i-1,j]:
+    #             xv[i,j] = xv[i-1,j]
+    #         elif xv[i,j] > 0.1:
+    #             xv[i,j] = 0.1
+    #         if yv[i,j] < yv[i,j-1]:
+    #             yv[i,j] = yv[i-1,j]
+    #         elif yv[i,j] > 0.1:
+    #             yv[i,j] = 0.1
+        
     for i in range(0,np_img.shape[0]):
         for j in range(0,np_img.shape[1]):
             area_grid[i,j] = area(i,j,xv,yv)
-    print('cost of generation',calculation,':',cost(area_grid,brightness_comp)) 
-    print(np.amax(abs(loss)))
+    # print('cost of generation',calculation,':',cost(area_grid,brightness_comp)) 
+    # print(np.amax(abs(loss)))
+    print('generation',calculation)
     loss = area_grid - brightness_comp
 
     data.append((calculation,(cost(area_grid,brightness_comp))))

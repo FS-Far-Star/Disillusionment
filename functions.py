@@ -49,12 +49,13 @@ def f(phi,i,j): #built-in neunmann boundary condition
 #solve poisson
 @jit
 def solve_poisson(phi,loss,iteration):
+    it = phi
     for i in range(0,iteration):
-        it = phi
         for i in range(0,phi.shape[0]):
             for j in range(0,phi.shape[1]):
                 delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
                 delta = delta/4*1.94    #1.94 is overcorrection factor
                 #print(delta)
                 it[i,j] += delta
-    return it
+        phi = it
+    return phi
