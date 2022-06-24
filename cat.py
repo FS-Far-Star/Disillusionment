@@ -24,7 +24,7 @@ clear()
 # plt.show()
 
 # Read image, convert to greyscale, save as greyscale.png, convert to array
-img = Image.open('download.png').convert('L')
+img = Image.open('download1.png').convert('L')
 img.save('greyscale.png')
 np_img = np.array(img)
 # np_img = np.rot90(np_img, 2)
@@ -40,7 +40,7 @@ height = 0.1    #meter, acrylic block height
 width = 0.1    #meter, acrylic block width
 A_t = height*width  #total_area
 spacing = height/np_img.shape[0]
-
+#print(spacing)
 # Coordinate system
 x = np.linspace(0,width,np_img.shape[0]+1)
 y = np.linspace(0,height,np_img.shape[1]+1)
@@ -63,27 +63,18 @@ area_grid = area_grid/A_t
 
 '''Image Processing'''
 total_brightness = np.sum(np_img)
-#print(total_brightness)
 brightness_comp = np.array(img)/total_brightness
-#print(np.sum(brightness_comp))
-#print(brightness_comp)
+np.save('brightness',brightness_comp)
 
-# print(cost(area_grid,brightness_comp))
 loss = calculate_loss(area_grid,brightness_comp)
-# print(loss)
 
 '''solve poisson'''
-phi = area_grid     #initial guess
-# print('intial cost:',cost(area_grid,brightness_comp)) 
-# print(np.amax(abs(loss)))
-
-# plt.pcolormesh(a,b,loss)
-# plt.show()
 data =[]
-for calculation in range(1,101):
+limit = 50
+for calculation in range(1,limit+1):
     '''solve poisson'''
-    phi = solve_poisson(phi,loss,300)
-    
+    phi = solve_poisson(area_grid,loss,1000)
+    phi[0,:],phi[:,0],phi[-1,:],phi[:,-1] = phi[1,:],phi[:,1],phi[-2,:],phi[:,-2]
     # colormap
     # plt1 = plt.pcolormesh(a,b,phi)
 
@@ -96,62 +87,69 @@ for calculation in range(1,101):
 
     '''morph grid'''
     grad = np.gradient(phi,spacing)
-    delta_x = grad[0]*spacing
-    delta_y = grad[1]*spacing
-
+    delta_x = grad[0]*spacing/10
+    delta_y = grad[1]*spacing/10
     # Plot vector field
     #plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
     #plt.quiver(a,b,delta_x,delta_y)
 
     # plot points
-    if calculation%10 == 1:
-        plt.plot(xv,yv)
-        ax = plt.gca() 
-        ax.set_aspect(1)
-        plt.show()
-    
-    # print(xv.shape)
-    # print(delta_x.shape)
+    if calculation%50 == 0:
+    #     plt.plot(xv,yv)
+    #     ax = plt.gca() 
+    #     ax.set_aspect(1)
+    #     plt.show()
+
+    #3D height map
+        fig1 = plt.figure()
+        ax = fig1.add_subplot(111, projection='3d')
+        ax.plot_surface(a,b,phi)
+        #ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
+        plt.title('phi as 3d height map of generation {}'.format(calculation))
+        #plt.show()
+
+        # np.save('phi{}'.format(calculation),phi)
+        # np.save('xv{}'.format(calculation),xv)
+        # np.save('yv{}'.format(calculation),yv)
+
+    # morph grid
     xv[1:-1,1:-1] -= delta_x[1:,1:]
     yv[1:-1,1:-1] -= delta_y[1:,1:]
 
-    #check
-    # for i in range(1,np_img.shape[0]):
-    #     for j in range(1,np_img.shape[1]):
-    #         if xv[i,j] < xv[i-1,j] or yv[i,j] < yv[i,j-1]:
-    #             xv[1:-1,1:-1] += delta_x[1:,1:]
-    #             yv[1:-1,1:-1] += delta_y[1:,1:]
-    #             print('iteration interruption')
-    #             break
-
-    for i in range(0,np_img.shape[0]):
-        for j in range(0,np_img.shape[1]):
-            area_grid[i,j] = area(i,j,xv,yv)
-    # print('cost of generation',calculation,':',cost(area_grid,brightness_comp)) 
-    # print(np.amax(abs(loss)))
+    area_grid = area_grid_update(xv,yv)
+    area_grid = area_grid
     print('generation',calculation)
     loss = calculate_loss(area_grid,brightness_comp)
     data.append((calculation,(cost(area_grid,brightness_comp))))
-    # plt.pcolormesh(a,b,loss)
-    # plt.show()
 #----------------- end of iterations----------------
 
 #save data
 np.save('xv',xv)
 np.save('yv',yv)
 np.save('phi',phi)
-pd.DataFrame(phi).to_csv("phi.csv",header=None, index=None)
-pd.DataFrame(xv).to_csv("xv.csv",header=None, index=None)
-pd.DataFrame(yv).to_csv("yv.csv",header=None, index=None)
+# pd.DataFrame(phi).to_csv("phi.csv",header=None, index=None)
+# pd.DataFrame(xv).to_csv("xv.csv",header=None, index=None)
+# pd.DataFrame(yv).to_csv("yv.csv",header=None, index=None)
 
 # 3D height map
+phi = np.load('phi.npy')
 fig1 = plt.figure()
 ax = fig1.add_subplot(111, projection='3d')
-ax.plot_surface(a,b, phi)
+#ax.plot_surface(a,b, phi)
+ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
+#ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
 plt.title('phi as 3d height map')
+
+# fig5 = plt.figure()
+# ax = fig5.add_subplot(111, projection='3d')
+# #ax.plot_surface(a,b, phi)
+# ax.plot_surface(a,b,phi)
+# #ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
+# plt.title('phi as 3d height map, with edges')
 
 # grid
 fig2 = plt.figure()
+plt.plot(xv,yv)
 plt.plot(xv[0:-1:10,0:-1:10],yv[0:-1:10,0:-1:10])
 ax = plt.gca() 
 ax.set_aspect(1)

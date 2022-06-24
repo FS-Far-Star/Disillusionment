@@ -1,5 +1,4 @@
 import numpy as np
-x1 = np.arange(100.0).reshape((100))
-np.save('test',x1)
-x2 = np.load('test.npy')
-print(x2)
+phi = np.arange(100.0).reshape((10,10))
+phi[0,:],phi[:,0],phi[-1,:],phi[:,-1] = phi[1,:],phi[:,1],phi[-2,:],phi[:,-2]
+print(phi)
