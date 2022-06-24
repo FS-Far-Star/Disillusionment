@@ -59,3 +59,11 @@ def solve_poisson(phi,loss,iteration):
                 it[i,j] += delta
         phi = it
     return phi
+
+def calculate_loss(area_grid,brightness_comp):
+    loss = area_grid - brightness_comp
+    loss[0,:] = 0
+    loss[-1,:] = 0
+    loss[:,0] = 0
+    loss[:,-1] = 0
+    return loss

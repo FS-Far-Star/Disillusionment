@@ -1,4 +1,5 @@
 import numpy as np
 x1 = np.arange(100.0).reshape((100))
-print(x1)
-print(x1[1:-1])
+np.save('test',x1)
+x2 = np.load('test.npy')
+print(x2)

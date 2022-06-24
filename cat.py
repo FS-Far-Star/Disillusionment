@@ -1,4 +1,3 @@
-import imp
 import math 
 import matplotlib 
 import matplotlib.pyplot as plt 
@@ -10,6 +9,7 @@ import os
 from shapely.geometry import Polygon
 from functions import *
 from numba import jit
+import pandas as pd 
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -69,19 +69,20 @@ brightness_comp = np.array(img)/total_brightness
 #print(brightness_comp)
 
 # print(cost(area_grid,brightness_comp))
-loss = area_grid - brightness_comp
+loss = calculate_loss(area_grid,brightness_comp)
+# print(loss)
 
 '''solve poisson'''
 phi = area_grid     #initial guess
-print('intial cost:',cost(area_grid,brightness_comp)) 
-print(np.amax(abs(loss)))
+# print('intial cost:',cost(area_grid,brightness_comp)) 
+# print(np.amax(abs(loss)))
 
 # plt.pcolormesh(a,b,loss)
 # plt.show()
 data =[]
 for calculation in range(1,101):
     '''solve poisson'''
-    phi = solve_poisson(phi,loss,200)
+    phi = solve_poisson(phi,loss,300)
     
     # colormap
     # plt1 = plt.pcolormesh(a,b,phi)
@@ -99,11 +100,15 @@ for calculation in range(1,101):
     delta_y = grad[1]*spacing
 
     # Plot vector field
-    plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
+    #plt.quiver(a[0:-1:10,0:-1:10],b[0:-1:10,0:-1:10],delta_x[0:-1:10,0:-1:10],delta_y[0:-1:10,0:-1:10])
     #plt.quiver(a,b,delta_x,delta_y)
-    ax = plt.gca() 
-    ax.set_aspect(1)
-    # plt.show()
+
+    # plot points
+    if calculation%10 == 1:
+        plt.plot(xv,yv)
+        ax = plt.gca() 
+        ax.set_aspect(1)
+        plt.show()
     
     # print(xv.shape)
     # print(delta_x.shape)
@@ -113,26 +118,31 @@ for calculation in range(1,101):
     #check
     # for i in range(1,np_img.shape[0]):
     #     for j in range(1,np_img.shape[1]):
-    #         if xv[i,j] < xv[i-1,j]:
-    #             xv[i,j] = xv[i-1,j]
-    #         elif xv[i,j] > 0.1:
-    #             xv[i,j] = 0.1
-    #         if yv[i,j] < yv[i,j-1]:
-    #             yv[i,j] = yv[i-1,j]
-    #         elif yv[i,j] > 0.1:
-    #             yv[i,j] = 0.1
-        
+    #         if xv[i,j] < xv[i-1,j] or yv[i,j] < yv[i,j-1]:
+    #             xv[1:-1,1:-1] += delta_x[1:,1:]
+    #             yv[1:-1,1:-1] += delta_y[1:,1:]
+    #             print('iteration interruption')
+    #             break
+
     for i in range(0,np_img.shape[0]):
         for j in range(0,np_img.shape[1]):
             area_grid[i,j] = area(i,j,xv,yv)
     # print('cost of generation',calculation,':',cost(area_grid,brightness_comp)) 
     # print(np.amax(abs(loss)))
     print('generation',calculation)
-    loss = area_grid - brightness_comp
-
+    loss = calculate_loss(area_grid,brightness_comp)
     data.append((calculation,(cost(area_grid,brightness_comp))))
     # plt.pcolormesh(a,b,loss)
     # plt.show()
+#----------------- end of iterations----------------
+
+#save data
+np.save('xv',xv)
+np.save('yv',yv)
+np.save('phi',phi)
+pd.DataFrame(phi).to_csv("phi.csv",header=None, index=None)
+pd.DataFrame(xv).to_csv("xv.csv",header=None, index=None)
+pd.DataFrame(yv).to_csv("yv.csv",header=None, index=None)
 
 # 3D height map
 fig1 = plt.figure()
