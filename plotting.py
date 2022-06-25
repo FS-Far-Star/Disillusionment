@@ -42,12 +42,12 @@ loss = calculate_loss(area_grid,brightness_comp)
 
 
 # 3D height map
-fig1 = plt.figure()
-ax = fig1.add_subplot(111, projection='3d')
-#ax.plot_surface(a,b, phi)
-ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
-#ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
-plt.title('phi as 3d height map')
+# fig1 = plt.figure()
+# ax = fig1.add_subplot(111, projection='3d')
+# #ax.plot_surface(a,b, phi)
+# ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
+# #ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
+# plt.title('phi as 3d height map')
 
 #grid
 fig2 = plt.figure()
@@ -56,9 +56,9 @@ plt.plot(xv[1:-2,1:-2],yv[1:-2,1:-2])
 ax = plt.gca() 
 ax.set_aspect(1)
 
-# fig3 = plt.figure()
-# ax = plt.gca() 
-# ax.set_aspect(1)
+fig3 = plt.figure()
+ax = plt.gca() 
+ax.set_aspect(1)
 plt.pcolormesh(a,b,loss)
 
 plt.show()
