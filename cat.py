@@ -70,7 +70,7 @@ loss = calculate_loss(area_grid,brightness_comp)
 
 '''solve poisson'''
 data =[]
-limit = 50
+limit = 85
 for calculation in range(1,limit+1):
     '''solve poisson'''
     phi = solve_poisson(area_grid,loss,1000)
@@ -124,9 +124,9 @@ for calculation in range(1,limit+1):
 #----------------- end of iterations----------------
 
 #save data
-np.save('xv',xv)
-np.save('yv',yv)
-np.save('phi',phi)
+# np.save('xv',xv)
+# np.save('yv',yv)
+# np.save('phi',phi)
 # pd.DataFrame(phi).to_csv("phi.csv",header=None, index=None)
 # pd.DataFrame(xv).to_csv("xv.csv",header=None, index=None)
 # pd.DataFrame(yv).to_csv("yv.csv",header=None, index=None)
@@ -149,8 +149,8 @@ plt.title('phi as 3d height map')
 
 # grid
 fig2 = plt.figure()
-plt.plot(xv,yv)
-plt.plot(xv[0:-1:10,0:-1:10],yv[0:-1:10,0:-1:10])
+#plt.plot(xv,yv)
+plt.plot(xv[1:-2,1:-2],yv[1:-2,1:-2])
 ax = plt.gca() 
 ax.set_aspect(1)
 
