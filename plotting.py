@@ -9,7 +9,6 @@ from numpy import *
 from shapely.geometry import Polygon
 from functions import *
 import pandas as pd 
-from edgefinder import B
 
 import warnings
 warnings.filterwarnings('ignore')  
@@ -43,13 +42,13 @@ a,b = np.meshgrid(x, y)
 # # phi = solve_poisson(area_grid,loss,1000)
 
 
-# 3D height map
-fig1 = plt.figure()
-ax = fig1.add_subplot(111, projection='3d')
-#ax.plot_surface(a,b, phi)
-ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
-#ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
-plt.title('phi as 3d height map')
+# # 3D height map
+# fig1 = plt.figure()
+# ax = fig1.add_subplot(111, projection='3d')
+# #ax.plot_surface(a,b, phi)
+# ax.plot_surface(a[1:-1,1:-1],b[1:-1,1:-1], phi[1:-1,1:-1])
+# #ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
+# plt.title('phi as 3d height map')
 
 # fig1 = plt.pcolormesh(a,b,B)
 # ax = plt.gca() 
@@ -57,9 +56,10 @@ plt.title('phi as 3d height map')
 
 #grid
 fig2 = plt.figure()
-#plt.plot(xv,yv)
-plt.plot(xv[1:-2:3,1:-2:3],yv[1:-2:3,1:-2:3])
-plt.plot(np.transpose(xv)[1:-2:3,1:-2:3],np.transpose(yv)[1:-2:3,1:-2:3])
+plt.plot(xv,yv)
+plt.plot(np.transpose(xv),np.transpose(yv))
+# plt.plot(xv[1:-2:3,1:-2:3],yv[1:-2:3,1:-2:3])
+# plt.plot(np.transpose(xv)[1:-2:3,1:-2:3],np.transpose(yv)[1:-2:3,1:-2:3])
 # plt.pcolormesh(a,b,B)
 ax = plt.gca() 
 ax.set_aspect(1)

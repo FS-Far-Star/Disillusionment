@@ -24,11 +24,11 @@ clear()
 # plt.show()
 
 # Read image, convert to greyscale, save as greyscale.png, convert to array
-img = Image.open('download.png').convert('L')
-img.save('greyscale.png')
+img = Image.open('cat.png').convert('L')
+# img.save('greyscale.png')
 np_img = np.array(img)
-# np_img = np.rot90(np_img, 2)
-# np_img = np.fliplr(np_img)
+np_img = np.rot90(np_img, 2)
+np_img = np.fliplr(np_img)
 # print(np_img)
 
 # Array back to image
@@ -66,7 +66,7 @@ area_grid = area_grid/A_t
 
 '''Image Processing'''
 total_brightness = np.sum(np_img)
-brightness_comp = np.array(img)/total_brightness
+brightness_comp = np_img/total_brightness
 np.save('brightness',brightness_comp)
 
 loss = calculate_loss(area_grid,brightness_comp)
@@ -74,7 +74,7 @@ loss = calculate_loss(area_grid,brightness_comp)
 '''solve poisson'''
 data = []
 step = []
-limit = 1000
+limit = 66
 for calculation in range(1,limit+1):
     '''solve poisson'''
     guess = np.ones((np_img.shape[0],np_img.shape[1]))
