@@ -9,6 +9,7 @@ from numpy import *
 from shapely.geometry import Polygon
 from functions import *
 import pandas as pd 
+from edgefinder import B
 
 import warnings
 warnings.filterwarnings('ignore')  
@@ -49,16 +50,20 @@ loss = calculate_loss(area_grid,brightness_comp)
 # #ax.plot_surface(a[2:-2,2:-2],b[2:-2,2:-2], phi[2:-2,2:-2])
 # plt.title('phi as 3d height map')
 
+fig1 = plt.pcolormesh(a,b,B)
+
 #grid
 fig2 = plt.figure()
 #plt.plot(xv,yv)
 plt.plot(xv[1:-2,1:-2],yv[1:-2,1:-2])
+plt.plot(np.transpose(xv)[1:-2,1:-2],np.transpose(yv)[1:-2,1:-2])
+# plt.pcolormesh(a,b,B)
 ax = plt.gca() 
 ax.set_aspect(1)
 
-fig3 = plt.figure()
-ax = plt.gca() 
-ax.set_aspect(1)
-plt.pcolormesh(a,b,loss)
+# fig3 = plt.figure()
+# ax = plt.gca() 
+# ax.set_aspect(1)
+# plt.pcolormesh(a,b,loss)
 
 plt.show()
