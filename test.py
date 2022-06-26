@@ -1,5 +1,3 @@
-import numpy as np
-phi = np.arange(100.0).reshape((10,10))
-print(phi)
-phi = np.rot90(phi, 3)
-print(phi)
+from init import *
+print(np.zeros((10,5)))
+print(np.zeros((10,5)).shape)

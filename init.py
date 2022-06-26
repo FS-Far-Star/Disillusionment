@@ -1,0 +1,32 @@
+import imp
+import math 
+import matplotlib 
+import matplotlib.pyplot as plt 
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+from PIL import Image
+import os
+import pandas as pd 
+
+import warnings
+warnings.filterwarnings('ignore')
+
+#clear eveyrthing
+clear = lambda: os.system('cls')
+clear()
+
+name_of_file = 'images/cat.png'
+#https://www.img2go.com/compress-image
+#image resize website
+
+# Real world parameters
+height = 0.1    #meter, acrylic block height
+width = 0.1    #meter, acrylic block width
+
+# Solving parameters
+poisson_requirement = 1000   #usually enough to converge
+morph_grid_requirement = 200 #usually 100 is enough
+
+'''read image'''
+img = Image.open(name_of_file).convert('L') #read image, convert to greyscale
+np_img = np.array(img)

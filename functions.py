@@ -1,10 +1,4 @@
-import math 
-import matplotlib 
-import matplotlib.pyplot as plt 
-import numpy as np
-from PIL import Image
-from numpy import *
-import os
+from init import *
 from shapely.geometry import Polygon
 import numba
 from numba import jit
@@ -19,7 +13,6 @@ def area(i,j,xv,yv):
     x=[xv[i,j],xv[i+1,j],xv[i+1,j+1],xv[i,j+1]]
     y=[yv[i,j],yv[i+1,j],yv[i+1,j+1],yv[i,j+1]]
     shape = Polygon(zip(x, y))
-    #print(shape.area)
     return shape.area
 
 # @jit    #cost function
@@ -46,7 +39,7 @@ def f(phi,i,j):
         b = j
     return(phi[a,b])
 
-@jit   
+@jit   #the numpy grad is unfortunately too advanced
 def calc_grad(phi,spacing_x,spacing_y):
     grad_x = np.zeros((phi.shape[0],phi.shape[1]))
     grad_y = np.zeros((phi.shape[0],phi.shape[1]))
@@ -56,7 +49,8 @@ def calc_grad(phi,spacing_x,spacing_y):
             grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/spacing_y
     grad = [grad_x,grad_y]
     return grad
-@jit    #solve poisson
+
+@jit    #solve poisson with relaxation
 def solve_poisson(phi,loss,iteration):
     for iteration in range(0,iteration):
         it = phi
@@ -77,16 +71,12 @@ def area_grid_update(xv,yv):
             area_grid[i,j] = area(i,j,xv,yv)
     return area_grid
 
-@jit
+@jit    #calculate the loss matrix
 def calculate_loss(area_grid,brightness_comp):
     loss = area_grid - brightness_comp
-    loss[0,:] = 0
-    loss[-1,:] = 0
-    loss[:,0] = 0
-    loss[:,-1] = 0
     return loss
 
-@jit
+@jit    #find the maximum allowed step size, then divide by two
 def find_step_size(xv,yv,grad):
     min_dt = 100
     for i in range(1,xv.shape[0]-2):
