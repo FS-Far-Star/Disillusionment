@@ -16,7 +16,7 @@ for calculation in range(1,morph_grid_requirement+1):
     loss = calculate_loss(area_grid,brightness_comp)
     #Solve Poisson
     guess = np.ones((np_img.shape[0],np_img.shape[1]))
-    phi = solve_poisson(guess,loss,poisson_requirement)
+    phi = solve_poisson2(guess,loss,poisson_requirement)
 
     # Plot phi, as color map or 3d height map
     # fig1 = plt.figure()

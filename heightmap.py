@@ -19,6 +19,8 @@ for i in range(1,50):
     div = div_norm(normal)                                  #divergance of normal 
     zv = solve_poisson2(zv,div,poisson_requirement)
 
+np.save('testing_data/zv',zv)
+
 # Plot heightmap, as color map or 3d height map
 
 # fig1 = plt.figure()
@@ -26,6 +28,6 @@ for i in range(1,50):
 # plt.title('heightmap as color map')
 fig2 = plt.figure()
 ax = fig2.add_subplot(111, projection='3d')
-ax.plot_surface(a,b, zv)
+ax.plot_surface(a,b,zv)
 plt.title('heightmap as 3d height map')
 plt.show()
