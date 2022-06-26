@@ -22,6 +22,7 @@ name_of_file = 'images/cat.png'
 # Real world parameters
 height = 0.1    #meter, acrylic block height
 width = 0.1    #meter, acrylic block width
+thickness = 0.02   #meter, acrylic block thickness
 
 # Solving parameters
 poisson_requirement = 1000   #usually enough to converge

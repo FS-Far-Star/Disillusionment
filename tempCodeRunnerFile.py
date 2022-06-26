@@ -1,0 +1,5 @@
+# fig2 = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(a,b, phi)
+# plt.title('phi as 3d height map')
+# plt.show()

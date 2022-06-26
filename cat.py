@@ -26,7 +26,7 @@ step = []
 for calculation in range(1,morph_grid_requirement+1):
     area_grid = area_grid_update(xv,yv)     #calculate area based on new coordinates
     area_grid = area_grid/A_t               #normalize area
-    #print('generation',calculation)
+    print('generation',calculation)
     loss = calculate_loss(area_grid,brightness_comp)
     #Solve Poisson
     guess = np.ones((np_img.shape[0],np_img.shape[1]))
@@ -78,6 +78,23 @@ for calculation in range(1,morph_grid_requirement+1):
     step.append((calculation,step_size))
 #----------------- end of iterations----------------
 
+'''calculate heightmap'''
+normal = calc_norm(xv,yv,spacing_x,spacing_y)  #3D array containing x,y components of normal vectors
+div = div_norm(normal)  #divergance of normal 
+guessh = 0.02*np.ones((np_img.shape[0],np_img.shape[1]))
+heightmap = solve_poisson(guess,div,poisson_requirement)
+
+# Plot heightmap, as color map or 3d height map
+fig1 = plt.figure()
+plt.pcolormesh(heightmap)
+plt.title('heightmap as color map')
+# fig2 = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(a,b, heightmap)
+# plt.title('heightmap as 3d height map')
+plt.show()
+
+    
 '''save data'''
 # np.save('data/xv',xv)
 # np.save('data/yv',yv)
