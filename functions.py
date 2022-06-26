@@ -1,4 +1,4 @@
-from init import *
+from basics import *
 from shapely.geometry import Polygon
 import numba
 from numba import jit
@@ -64,12 +64,12 @@ def solve_poisson(phi,loss,iteration):
     return phi
 
 @jit    # update area of every grid
-def area_grid_update(xv,yv):
+def area_grid_update(xv,yv,A_t):
     area_grid = np.zeros((xv.shape[0]-1,xv.shape[1]-1))
     for i in range(0,xv.shape[0]-1):
         for j in range(0,xv.shape[1]-1):
             area_grid[i,j] = area(i,j,xv,yv)
-    return area_grid
+    return area_grid/A_t
 
 @jit    #calculate the loss matrix
 def calculate_loss(area_grid,brightness_comp):
@@ -98,17 +98,17 @@ def find_step_size(xv,yv,grad):
 
 
 @jit    #calculate the normal vectors of the mirror surface
-def calc_norm(xv, yv, spacing_x,spacing_y):
+def calc_norm(xv,yv,spacing_x,spacing_y,d):
     n1 = 1
     n2 = 1.48899     #refractive indices
-    d = 0.2    #the distance from the mirror to the image, say 0.2m
-    normal = np.zeros([xv.shape[0],xv.shape[1],2])
+    normal = np.zeros((xv.shape[0],xv.shape[1],2))
     for i in range(0,xv.shape[0]):
         for j in range(0,xv.shape[1]):
             u = j*spacing_x
             v = i*spacing_y   #coordinates of pixels on the image plane
-            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d))/(n1-n2))
-            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d))/(n1-n2))
+            #print(d[i,j])
+            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
+            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
 
     return normal
 
@@ -120,8 +120,9 @@ def div_norm(normal):
     for i in range(0,div.shape[0]):
         for j in range(0,div.shape[1]):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
-            delta_y = 0.5*(f(ny,i+1,j)-f(ny,i+1,j))
-            div[i,j] = delta_x + delta_y
+            delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
+            div[i,j] = delta_x / spacing_x + delta_y / spacing_y
+            # div[i,j] = delta_x + delta_y
     return div
 
 

@@ -1,17 +1,11 @@
 import imp
-from init import *
+from basics import *
 
 xv = np.array(pd.read_csv('data/xv.csv',header=None))
 yv = np.array(pd.read_csv('data/yv.csv',header=None))
 phi = np.array(pd.read_csv('data/phi.csv',header=None))
 step = np.load('data/step.npy')
 data = np.load('data/data.npy')
-
-# Plotting coords------------------
-x = np.linspace(0,width,np_img.shape[0])
-y = np.linspace(0,height,np_img.shape[1])
-a,b = np.meshgrid(x, y)
-#--------------------------------
 
 #------Plot phi, as color map or 3d height map
 # fig1 = plt.figure()
