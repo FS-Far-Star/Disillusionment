@@ -25,6 +25,6 @@ width = 0.1    #meter, acrylic block width
 thickness = 0.02   #meter, acrylic block thickness
 
 # Solving parameters
-poisson_requirement = 1000   #usually enough to converge
+poisson_requirement = 10000   #usually enough to converge
 morph_grid_requirement = 200 #usually 100 is enough
 height_requirement = 3       #
