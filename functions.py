@@ -132,8 +132,8 @@ def div_norm(normal):
         for j in range(0,div.shape[1]):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
-            #div[i,j] = delta_x/spacing_x + delta_y/spacing_y
-            div[i,j] = delta_x + delta_y
+            div[i,j] = delta_x/spacing_x + delta_y/spacing_y
+            #div[i,j] = delta_x + delta_y
     return div
 
 @jit    #solve poisson with relaxation
