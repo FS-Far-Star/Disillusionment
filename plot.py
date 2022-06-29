@@ -26,7 +26,7 @@ ax = plt.gca()
 ax.set_aspect(1)
 
 fig_img = plt.figure()
-plt.imshow(np_img,cmap='gray')
+plt.imshow(img,cmap='gray')
 
 #-----Plot step size and error
 #fig4 = plt.figure()
