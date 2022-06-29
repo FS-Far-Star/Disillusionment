@@ -50,18 +50,18 @@ def calc_grad(phi,spacing_x,spacing_y):
     grad = [grad_x,grad_y]
     return grad
 
-@jit    #solve poisson with relaxation
-def solve_poisson(phi,loss,iteration):
-    for iteration in range(0,iteration):
-        it = phi
-        for i in range(0,phi.shape[0]):
-            for j in range(0,phi.shape[1]):
-                delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
-                delta = delta/4*1.94    #1.94 is overcorrection factor
-                #print(delta)
-                it[i,j] += delta
-        phi = it
-    return phi
+# @jit    #solve poisson with relaxation
+# def solve_poisson(phi,loss,iteration):
+#     for iteration in range(0,iteration):
+#         it = phi
+#         for i in range(0,phi.shape[0]):
+#             for j in range(0,phi.shape[1]):
+#                 delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
+#                 delta = delta/4*1.94    #1.94 is overcorrection factor
+#                 #print(delta)
+#                 it[i,j] += delta
+#         phi = it
+#     return phi
 
 @jit    # update area of every grid
 def area_grid_update(xv,yv,A_t):
@@ -106,8 +106,7 @@ def calc_norm(xv,yv,spacing_x,spacing_y,d):
         for j in range(0,xv.shape[1]-1):
             u = j*spacing_x
             v = i*spacing_y   #coordinates of pixels on the image plane
-            normal[i,j,0] = (np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2)
-            normal[i,j,0] = np.tan(normal[i,j,0])
+            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
     return normal
 
@@ -143,7 +142,7 @@ def solve_poisson2(phi,loss,iteration):
         for i in range(0,phi.shape[0]):
             for j in range(0,phi.shape[1]):
                 delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j)
-                delta = delta/4*1.94 + loss[i,j]   #1.94 is overcorrection factor
+                delta = delta/4*1.94 - loss[i,j]   #1.94 is overcorrection factor
                 #print(delta)
                 it[i,j] += delta
         phi = it

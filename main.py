@@ -14,6 +14,7 @@ for calculation in range(1,morph_grid_requirement+1):
     area_grid = area_grid_update(xv,yv,A_t)     #calculate area based on new coordinates, result is normalized
     print('generation',calculation)
     loss = calculate_loss(area_grid,brightness_comp)
+    loss = -loss
     #Solve Poisson
     guess = np.ones((np_img.shape[0],np_img.shape[1]))
     phi = solve_poisson2(guess,loss,poisson_requirement)
