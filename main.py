@@ -16,7 +16,9 @@ for calculation in range(1,morph_grid_requirement+1):
     loss = calculate_loss(area_grid,brightness_comp)
     #Solve Poisson
     guess = np.ones((np_img.shape[0],np_img.shape[1]))
-    phi = solve_poisson(guess,loss,poisson_requirement)
+    phi = solve_poisson(guess,-loss,poisson_requirement)
+    
+    #print(np.sum(loss[:,:]))
 
     # Plot phi, as color map or 3d height map
     # fig1 = plt.figure()
@@ -44,11 +46,11 @@ for calculation in range(1,morph_grid_requirement+1):
     # plt.show()
     
     # Plot vector field
-    # ps = 3    #plot spacing
-    # plt.quiver(a[0:-1:ps,0:-1:ps],b[0:-1:ps,0:-1:ps],delta_x[0:-1:ps,0:-1:ps],delta_y[0:-1:ps,0:-1:ps])
-    # ax = plt.gca() 
-    # ax.set_aspect(1)
-    # plt.show()
+    #ps = 3    #plot spacing
+    #plt.quiver(a[0:-1:ps,0:-1:ps],b[0:-1:ps,0:-1:ps],delta_x[0:-1:ps,0:-1:ps],delta_y[0:-1:ps,0:-1:ps])
+    #ax = plt.gca() 
+    #ax.set_aspect(1)
+    #plt.show()
 
     #check for collision, shouldn't happen at all as step size was chosen to avoid it
     for i in range(0,xv.shape[0]-1):
