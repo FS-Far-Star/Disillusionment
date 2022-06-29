@@ -15,7 +15,6 @@ warnings.filterwarnings('ignore')
 clear = lambda: os.system('cls')
 clear()
 
-#name_of_file = 'images/cat_small.png'
 name_of_file = 'images/cat_small.png'
 #https://www.img2go.com/compress-image
 #image resize website
@@ -27,5 +26,5 @@ thickness = 0.02   #meter, acrylic block thickness
 
 # Solving parameters
 poisson_requirement = 1000   #usually enough to converge
-morph_grid_requirement = 100 #usually 100 is enough
+morph_grid_requirement = 200 #usually 100 is enough
 height_requirement = 3       #
