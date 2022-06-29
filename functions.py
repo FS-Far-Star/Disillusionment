@@ -106,9 +106,15 @@ def calc_norm(xv,yv,spacing_x,spacing_y,d):
         for j in range(0,xv.shape[1]):
             u = j*spacing_x
             v = i*spacing_y   #coordinates of pixels on the image plane
+<<<<<<< Updated upstream
             #print(d[i,j])
             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
+=======
+            normal[i,j,0] = math.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
+            normal[i,j,1] = math.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
+    return normal
+>>>>>>> Stashed changes
 
     return normal
 
