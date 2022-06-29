@@ -10,17 +10,15 @@ elif testing == True:
 
 '''calculate heightmap'''
 zv = 0.02*np.ones((np_img.shape[0],np_img.shape[1]))    #initial guess
-print(zv)
 
-# for i in range(1,height_requirement):
-d = 0.5*np.ones((np_img.shape[0],np_img.shape[1]))
-print(d)
-k = d - zv  #actual height
-print(k)
-
-normal = calc_norm(xv, yv, spacing_x,spacing_y,k)      #3D array containing x,y components of normal vectors
-div = div_norm(normal)                                  #divergance of normal 
-zv = solve_poisson(zv,div,poisson_requirement)
+for i in range(1,2):
+    d = np.ones((np_img.shape[0],np_img.shape[1]))
+    d = np.subtract(d,zv)  #actual height
+    normal = calc_norm(xv,yv,spacing_x,spacing_y,d)
+    div = div_norm(normal)                          #divergance of normal 
+    zv = solve_poisson2(zv,div,poisson_requirement)
+    zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter
+    zv = zv*spacing_x     # is this even legal???
 
 # Plot heightmap, as color map or 3d height map
 

@@ -50,18 +50,18 @@ def calc_grad(phi,spacing_x,spacing_y):
     grad = [grad_x,grad_y]
     return grad
 
-@jit    #solve poisson with relaxation
-def solve_poisson(phi,loss,iteration):
-    for iteration in range(0,iteration):
-        it = phi
-        for i in range(0,phi.shape[0]):
-            for j in range(0,phi.shape[1]):
-                delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
-                delta = delta/4*1.94    #1.94 is overcorrection factor
-                #print(delta)
-                it[i,j] += delta
-        phi = it
-    return phi
+# @jit    #solve poisson with relaxation
+# def solve_poisson(phi,loss,iteration):
+#     for iteration in range(0,iteration):
+#         it = phi
+#         for i in range(0,phi.shape[0]):
+#             for j in range(0,phi.shape[1]):
+#                 delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
+#                 delta = delta/4*1.94    #1.94 is overcorrection factor
+#                 #print(delta)
+#                 it[i,j] += delta
+#         phi = it
+#     return phi
 
 @jit    # update area of every grid
 def area_grid_update(xv,yv,A_t):
@@ -97,28 +97,30 @@ def find_step_size(xv,yv,grad):
     return min_dt/2
 
 
-@jit    #calculate the normal vectors of the mirror surface
+#calculate the normal vectors of the mirror surface
 def calc_norm(xv,yv,spacing_x,spacing_y,d):
-    n1 = 1
-    n2 = 1.48899     #refractive indices
     normal = np.zeros((xv.shape[0],xv.shape[1],2))
-    for i in range(0,xv.shape[0]):
-        for j in range(0,xv.shape[1]):
+    for i in range(0,xv.shape[0]-1):
+        for j in range(0,xv.shape[1]-1):
             u = j*spacing_x
             v = i*spacing_y   #coordinates of pixels on the image plane
-<<<<<<< Updated upstream
-            #print(d[i,j])
-            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
-            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
-=======
-            normal[i,j,0] = math.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n1-n2))
-            normal[i,j,1] = math.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n1-n2))
-    return normal
->>>>>>> Stashed changes
-
+            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n2-n1))
+            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n2-n1))
     return normal
 
-@jit
+# def norm(xv,yv,spacing_x,spacing_y,d):
+#     eta = 1.48899
+#     normal = np.zeros((xv.shape[0],xv.shape[1],2))
+#     for i in range(0,xv.shape[0]-1):
+#         for j in range(0,xv.shape[1]-1):
+#             u = j*spacing_x
+#             v = i*spacing_y
+#             q_p = (u-xv[i,j],v-yv[i,j])
+#             squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
+#             k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
+#             normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
+#     return normal
+
 def div_norm(normal):
     div = np.zeros([normal.shape[0],normal.shape[1]])
     nx = normal[:,:,0]
@@ -127,11 +129,25 @@ def div_norm(normal):
         for j in range(0,div.shape[1]):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
-            div[i,j] = delta_x / spacing_x + delta_y / spacing_y
-            # div[i,j] = delta_x + delta_y
+            #div[i,j] = delta_x/spacing_x + delta_y/spacing_y
+            div[i,j] = delta_x + delta_y
+    #print('sum:',np.sum(div))
+    k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
+    #print(k)
+    for i in range(0,div.shape[0]):
+        for j in range(0,div.shape[1]): 
+            div[i,j] -= k                               #justification?
     return div
 
-
-
-
-
+@jit    #solve poisson with relaxation
+def solve_poisson2(phi,loss,iteration):
+    for iteration in range(0,iteration):
+        it = phi
+        for i in range(0,phi.shape[0]):
+            for j in range(0,phi.shape[1]):
+                delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j)
+                delta = delta/4*1.94 - loss[i,j]   #1.94 is overcorrection factor
+                #print(delta)
+                it[i,j] += delta
+        phi = it
+    return phi
