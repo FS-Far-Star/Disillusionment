@@ -11,17 +11,19 @@ elif testing == True:
 '''calculate heightmap'''
 zv = 0.002*np.ones((np_img.shape[0],np_img.shape[1]))    #initial guess
 
-for i in range(1,10):
-    d = 0.1*np.ones((np_img.shape[0],np_img.shape[1]))
+for i in range(1,15):
+    d = np.ones((np_img.shape[0],np_img.shape[1]))
     d = np.subtract(d,zv)  #actual height
     normal = calc_norm(xv,yv,spacing_x,spacing_y,d)
-    div = div_norm(normal)                                  #divergance of normal 
+    div = div_norm(normal)
+    print(div)
+    div = div/np.sum(div)/100000                              #divergance of normal 
     zv = solve_poisson2(zv,div,poisson_requirement)
 
 if testing == False:
-    np.save('testing_data/zv',zv)
+    pd.DataFrame(zv).to_csv("data/zv.csv",header=None, index=None)
 if testing == True:
-    np.save('data/zv',zv)
+    pd.DataFrame(zv).to_csv("testing_data/zv.csv",header=None, index=None)
 
 # Plot heightmap, as color map or 3d height map
 
@@ -31,5 +33,5 @@ if testing == True:
 fig2 = plt.figure()
 ax = fig2.add_subplot(111, projection='3d')
 ax.plot_surface(a,b,zv)
-plt.title('heightmap as 3d height map')
+plt.title('heightmap')
 plt.show()
