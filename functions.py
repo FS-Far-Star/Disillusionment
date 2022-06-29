@@ -100,8 +100,8 @@ def find_step_size(xv,yv,grad):
 #calculate the normal vectors of the mirror surface
 def calc_norm(xv,yv,spacing_x,spacing_y,d):
     normal = np.zeros((xv.shape[0],xv.shape[1],2))
-    for i in range(0,xv.shape[0]-1):
-        for j in range(0,xv.shape[1]-1):
+    for i in range(0,xv.shape[0]):
+        for j in range(0,xv.shape[1]):
             u = j*spacing_x
             v = i*spacing_y   #coordinates of pixels on the image plane
             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n2-n1))
