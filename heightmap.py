@@ -1,36 +1,29 @@
 from functions import *
-from basics import *
-
-if testing == False:
-    xv = np.array(pd.read_csv('data/xv.csv',header=None))
-    yv = np.array(pd.read_csv('data/yv.csv',header=None))
-elif testing == True:
-    xv = np.array(pd.read_csv('testing_data/xv.csv',header=None))
-    yv = np.array(pd.read_csv('testing_data/yv.csv',header=None))
+from loading import *
 
 '''calculate heightmap'''
-zv = 0.02*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
-#print(zv.shape)
+zv = 2*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
 
-for i in range(1,5):
-    d = np.ones((xv.shape[0],xv.shape[1]))
+for i in range(1,10):
+    d = 50*np.ones((xv.shape[0],xv.shape[1]))
     d = np.subtract(d,zv)  #actual height
-    normal = calc_norm(xv,yv,spacing_x,spacing_y,d)
+    normal = norm(xv,yv,spacing_x,spacing_y,d)
     div = div_norm(normal)                          #divergance of normal 
+    #print(div)
     zv = solve_poisson2(zv,div,poisson_requirement)
-    zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter
-    zv = zv*spacing_x     # is this even legal???
+    #zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter
+    #zv = zv*spacing_x     # is this even legal???
 
 '''save data'''
-pd.DataFrame(zv).to_csv("testing_data/zv.csv",header=None, index=None)
+if testing == False:
+    pd.DataFrame(zv).to_csv("data/zv.csv",header=None, index=None)
+else: 
+    pd.DataFrame(zv).to_csv("testing_data/zv.csv",header=None, index=None)
 
 # Plot heightmap, as color map or 3d height map
 
-# fig1 = plt.figure()
-# plt.pcolormesh(a,b,zv)
-# plt.title('heightmap as color map')
-fig2 = plt.figure()
-ax = fig2.add_subplot(111, projection='3d')
-ax.plot_surface(a,b,zv)
-plt.title('heightmap as 3d height map')
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_surface(xv,yv,zv)
+plt.title('complete contour')
 plt.show()

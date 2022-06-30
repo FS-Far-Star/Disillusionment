@@ -4,7 +4,7 @@ import numba
 from numba import jit
 
 import logging;
-logger = logging.getLogger("numba");
+logger = logging.getLogger("numba")
 logger.setLevel(logging.ERROR)
 
 @jit
@@ -98,28 +98,28 @@ def find_step_size(xv,yv,grad):
 
 
 #calculate the normal vectors of the mirror surface
-def calc_norm(xv,yv,spacing_x,spacing_y,d):
-    normal = np.zeros((xv.shape[0],xv.shape[1],2))
-    for i in range(0,xv.shape[0]):
-        for j in range(0,xv.shape[1]):
-            u = j*spacing_x
-            v = i*spacing_y   #coordinates of pixels on the image plane
-            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n2-n1))
-            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n2-n1))
-    return normal
-
-# def norm(xv,yv,spacing_x,spacing_y,d):
-#     eta = 1.48899
+# def calc_norm(xv,yv,spacing_x,spacing_y,d):
 #     normal = np.zeros((xv.shape[0],xv.shape[1],2))
-#     for i in range(0,xv.shape[0]-1):
-#         for j in range(0,xv.shape[1]-1):
+#     for i in range(0,xv.shape[0]):
+#         for j in range(0,xv.shape[1]):
 #             u = j*spacing_x
-#             v = i*spacing_y
-#             q_p = (u-xv[i,j],v-yv[i,j])
-#             squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
-#             k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
-#             normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
+#             v = i*spacing_y   #coordinates of pixels on the image plane
+#             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n2-n1))
+#             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n2-n1))
 #     return normal
+
+def norm(xv,yv,spacing_x,spacing_y,d):
+    eta = 1.48899
+    normal = np.zeros((xv.shape[0],xv.shape[1],2))
+    for i in range(0,xv.shape[0]-1):
+        for j in range(0,xv.shape[1]-1):
+            u = j*spacing_x
+            v = i*spacing_y
+            q_p = (u-xv[i,j],v-yv[i,j])
+            squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
+            k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
+            normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
+    return normal
 
 def div_norm(normal):
     div = np.zeros([normal.shape[0],normal.shape[1]])
@@ -131,12 +131,12 @@ def div_norm(normal):
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
             #div[i,j] = delta_x/spacing_x + delta_y/spacing_y
             div[i,j] = delta_x + delta_y
-    #print('sum:',np.sum(div))
-    k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
-    #print(k)
-    for i in range(0,div.shape[0]):
-        for j in range(0,div.shape[1]): 
-            div[i,j] -= k                               #justification?
+    # print('sum:',np.sum(div))
+    # k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
+    # print('k=',k)
+    # for i in range(0,div.shape[0]):
+    #     for j in range(0,div.shape[1]): 
+    #         div[i,j] -= k                               #justification?
     return div
 
 @jit    #solve poisson with relaxation

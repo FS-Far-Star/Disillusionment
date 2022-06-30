@@ -1,3 +1,2 @@
-a = 'cat_small.png'
-if 'small' in a:
-    print('true')
+a =[0,1,2,3,4]
+print(a[::2])
