@@ -18,9 +18,6 @@ spacing_y = height/np_img.shape[0]  #so the spacings are equal
 x,y = np.linspace(0,width-spacing_x,np_img.shape[0]), np.linspace(0,height-spacing_y,np_img.shape[1])
 a,b = np.meshgrid(x,y)
 
-x,y = np.linspace(0,width,np_img.shape[0]+1), np.linspace(0,height,np_img.shape[1]+1)
-c,d = np.meshgrid(x,y)
-
 '''Calculate total area'''
 A_t = height*width  #total_area
 
