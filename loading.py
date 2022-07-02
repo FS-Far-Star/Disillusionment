@@ -14,3 +14,6 @@ else:
     phi = np.array(pd.read_csv('testing_data/phi.csv',header=None))
     step = np.load('testing_data/step.npy')
     data = np.load('testing_data/data.npy')
+
+# print(zv.shape)
+# print(np.max(zv))

@@ -115,7 +115,7 @@ def norm(xv,yv,spacing_x,spacing_y,d):
         for j in range(0,xv.shape[1]-1):
             u = j*spacing_x
             v = i*spacing_y
-            q_p = (u-xv[i,j],v-yv[i,j])
+            # q_p = (u-xv[i,j],v-yv[i,j])
             squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
             k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
             normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
@@ -129,14 +129,14 @@ def div_norm(normal):
         for j in range(0,div.shape[1]):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
-            #div[i,j] = delta_x/spacing_x + delta_y/spacing_y
-            div[i,j] = delta_x + delta_y
+            div[i,j] = delta_x * spacing_x + delta_y * spacing_y
+            # div[i,j] = delta_x + delta_y
+    k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
     # print('sum:',np.sum(div))
-    # k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
     # print('k=',k)
-    # for i in range(0,div.shape[0]):
-    #     for j in range(0,div.shape[1]): 
-    #         div[i,j] -= k                               #justification?
+    for i in range(0,div.shape[0]):
+        for j in range(0,div.shape[1]): 
+            div[i,j] -= k                               #justification?
     return div
 
 @jit    #solve poisson with relaxation
