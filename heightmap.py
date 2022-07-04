@@ -8,13 +8,13 @@ max_diff = []
 for i in range(1,20):
     d = 1000*np.ones((xv.shape[0],xv.shape[1]))
     d = np.subtract(d,zv)  #actual height
-    normal = norm(xv,yv,spacing_x,spacing_y,d)
+    normal = norm(xv,yv,spacing,d)
     div = div_norm(normal)                          #divergance of normal 
     #print(div)
-    zv = solve_poisson2(zv,div,poisson_requirement)
+    zv = solve_poisson(zv,div,poisson_requirement)
     # zv -= np.sum(div)
     zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter
-    #zv = zv*spacing_x     # is this even legal???
+    #zv = zv*spacing     # is this even legal???
     max_diff.append((i,(np.max(zv)-np.min(zv))))
 
     print(np.max(zv))
@@ -23,8 +23,10 @@ for i in range(1,20):
 '''save data'''
 if testing == False:
     pd.DataFrame(zv).to_csv("data/zv.csv",header=None, index=None)
+    np.save('data/max_diff',max_diff)
 else: 
     pd.DataFrame(zv).to_csv("testing_data/zv.csv",header=None, index=None)
+    np.save('testing_data/max_diff',max_diff)
 
 # Plot heightmap, as color map or 3d height map
 

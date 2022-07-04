@@ -40,28 +40,23 @@ def f(phi,i,j):
     return(phi[a,b])
 
 @jit   #the numpy grad is unfortunately too advanced
-def calc_grad(phi,spacing_x,spacing_y):
+def calc_grad(phi,spacing):
     grad_x = np.zeros((phi.shape[0],phi.shape[1]))
     grad_y = np.zeros((phi.shape[0],phi.shape[1]))
     for i in range(0,phi.shape[0]-1):
         for j in range(0,phi.shape[1]-1):
-            grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/spacing_x
-            grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/spacing_y
+            grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/spacing
+            grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/spacing
     grad = [grad_x,grad_y]
     return grad
 
-# @jit    #solve poisson with relaxation
-# def solve_poisson(phi,loss,iteration):
-#     for iteration in range(0,iteration):
-#         it = phi
-#         for i in range(0,phi.shape[0]):
-#             for j in range(0,phi.shape[1]):
-#                 delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j) + loss[i,j]
-#                 delta = delta/4*1.94    #1.94 is overcorrection factor
-#                 #print(delta)
-#                 it[i,j] += delta
-#         phi = it
-#     return phi
+@jit    #solve poisson with relaxation
+def solve_poisson(phi,loss,iteration,sp=spacing):
+    for iteration in range(0,iteration):
+        for i in range(0,phi.shape[0]):
+            for j in range(0,phi.shape[1]):
+                phi[i,j] = (1-sigma)*f(phi,i,j)+sigma/4*(f(phi,i-1,j)+f(phi,i+1,j)+f(phi,i,j-1)+f(phi,i,j+1))-loss[i,j]*sp**2
+    return phi
 
 @jit    # update area of every grid
 def area_grid_update(xv,yv,A_t):
@@ -108,13 +103,12 @@ def find_step_size(xv,yv,grad):
 #             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n2-n1))
 #     return normal
 
-def norm(xv,yv,spacing_x,spacing_y,d):
-    eta = 1.48899
+def norm(xv,yv,spacing,d):
     normal = np.zeros((xv.shape[0],xv.shape[1],2))
     for i in range(0,xv.shape[0]-1):
         for j in range(0,xv.shape[1]-1):
-            u = j*spacing_x
-            v = i*spacing_y
+            u = j*spacing
+            v = i*spacing
             # q_p = (u-xv[i,j],v-yv[i,j])
             squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
             k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
@@ -129,25 +123,11 @@ def div_norm(normal):
         for j in range(0,div.shape[1]):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
-            div[i,j] = delta_x * spacing_x + delta_y * spacing_y
-            # div[i,j] = delta_x + delta_y
-    k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
-    # print('sum:',np.sum(div))
-    # print('k=',k)
-    for i in range(0,div.shape[0]):
-        for j in range(0,div.shape[1]): 
-            div[i,j] -= k                               #justification?
+            div[i,j] = (delta_x + delta_y)/spacing
+    # k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
+    # # print('sum:',np.sum(div))
+    # # print('k=',k)
+    # for i in range(0,div.shape[0]):
+    #     for j in range(0,div.shape[1]): 
+    #         div[i,j] -= k                               #justification?
     return div
-
-@jit    #solve poisson with relaxation
-def solve_poisson2(phi,loss,iteration):
-    for iteration in range(0,iteration):
-        it = phi
-        for i in range(0,phi.shape[0]):
-            for j in range(0,phi.shape[1]):
-                delta = f(phi,i-1,j) + f(phi,i+1,j) + f(phi,i,j-1) + f(phi,i,j+1) - 4*f(phi,i,j)
-                delta = delta/4*1.94 - loss[i,j]   #1.94 is overcorrection factor
-                #print(delta)
-                it[i,j] += delta
-        phi = it
-    return phi
