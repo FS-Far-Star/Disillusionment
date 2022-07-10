@@ -29,7 +29,7 @@ for calculation in range(1,morph_grid_requirement+1):
     # plt.show()
 
     #Morph the grid
-    grad = calc_grad(phi,spacing)   # calculate graident
+    grad = calc_grad(phi)   # calculate graident
     step_size = find_step_size(xv,yv,grad)      # find appropriate step size so that points don't surpass ones with higher index
     delta_x = grad[0]*step_size                 
     delta_y = grad[1]*step_size 

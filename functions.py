@@ -40,13 +40,13 @@ def f(phi,i,j):
     return(phi[a,b])
 
 @jit   #the numpy grad is unfortunately too advanced
-def calc_grad(phi,spacing):
+def calc_grad(phi,sp=spacing):
     grad_x = np.zeros((phi.shape[0],phi.shape[1]))
     grad_y = np.zeros((phi.shape[0],phi.shape[1]))
     for i in range(0,phi.shape[0]-1):
         for j in range(0,phi.shape[1]-1):
-            grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/spacing
-            grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/spacing
+            grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/sp
+            grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/sp
     grad = [grad_x,grad_y]
     return grad
 
