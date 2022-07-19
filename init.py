@@ -15,19 +15,19 @@ warnings.filterwarnings('ignore')
 clear = lambda: os.system('cls')
 clear()
 
-name_of_file = 'images/cat_50.png'
+name_of_file = 'images/subject1_real.jpg'
 #https://www.img2go.com/compress-image
 #image resize website
 
 # Real world parameters
 height = 100    #mm, acrylic block height
 width = 100    #mm, acrylic block width
-thickness = 5   #mm, acrylic block thickness
+thickness = 3   #mm, acrylic block thickness
 
 # Solving parameters
 poisson_requirement = 1000   #usually enough to converge
 sigma = 1.94                 #over-relaxation factor
-morph_grid_requirement = 160 #usually 100 is enough
+morph_grid_requirement = 150 #usually 100 is enough, depends on size though
 height_requirement = 3       #
 
 # Physics

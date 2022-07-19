@@ -1,2 +1,11 @@
-a =[0,1,2,3,4]
-print(a[:3])
+import imp
+from basics import *
+from functions import *
+a = np.array([0,0,1])
+b = np.array([0,1,0])
+c = np.array([1,0,0])
+s = find_normal(a,b,c)
+# print(s)
+# print(np.dot(s,s))
+
+print(10//2)

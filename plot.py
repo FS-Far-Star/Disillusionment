@@ -15,8 +15,8 @@ from loading import *
 #------Plot grid as a mesh
 fig3 = plt.figure()
 ps = 1  #plot spacing
-lw=0.2
-plt.plot(xv[::ps,::ps],yv[::ps,::ps],linewidth=lw)
+lw = 0.2
+plt.plot(xv[::ps,::ps],yv[::ps,::ps],linewidth = lw)
 plt.plot(np.transpose(xv)[::ps,::ps],np.transpose(yv)[::ps,::ps],linewidth=lw)
 ax = plt.gca() 
 ax.set_aspect(1)
@@ -25,13 +25,13 @@ ax.set_aspect(1)
 # plt.imshow(img,cmap='gray')
 
 #-----Plot step size and error
-# fig4 = plt.figure()
-# plt.plot(*zip(*step))
-# plt.title('step size for generations')  #allows check for convergence
+fig4 = plt.figure()
+plt.plot(*zip(*step))
+plt.title('step size for generations')  #allows check for convergence
 
-# fig5 = plt.figure()
-# plt.plot(*zip(*data))
-# plt.title('error for generations')
+fig5 = plt.figure()
+plt.plot(*zip(*data))
+plt.title('error for generations')
 #------------------------------
 
 fig = plt.figure()

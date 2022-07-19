@@ -9,7 +9,7 @@ def find(i,j):
     # Note!!!!! DO NOT use with -1 syntax
     return i*side+j
 s = np.max(zv)
-lift = 5 - s
+lift = thickness - s
 
 vertices = []
 # All locations on the mesh
@@ -68,4 +68,5 @@ for i, f in enumerate(faces):
         cad.vectors[i][j] = vertices[f[j],:]
 
 # Write the mesh to file "cad.stl"
-cad.save('cad.stl')
+cad.save('CAD.stl')
+print('complete')

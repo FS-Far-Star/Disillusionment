@@ -55,7 +55,7 @@ def solve_poisson(phi,loss,iteration,sp=spacing):
     for iteration in range(0,iteration):
         for i in range(0,phi.shape[0]):
             for j in range(0,phi.shape[1]):
-                phi[i,j] = (1-sigma)*f(phi,i,j)+sigma/4*(f(phi,i-1,j)+f(phi,i+1,j)+f(phi,i,j-1)+f(phi,i,j+1))-loss[i,j]*sp**2
+                phi[i,j] = (1-sigma)*f(phi,i,j)+sigma/4*(f(phi,i-1,j)+f(phi,i+1,j)+f(phi,i,j-1)+f(phi,i,j+1)-loss[i,j]*sp**2)
     return phi
 
 @jit    # update area of every grid
@@ -73,7 +73,7 @@ def calculate_loss(area_grid,brightness_comp):
 
 @jit    #find the maximum allowed step size, then divide by two
 def find_step_size(xv,yv,grad):
-    min_dt = 100
+    min_dt = 10000
     for i in range(1,xv.shape[0]-2):
         for j in range(1,xv.shape[1]-2):
             if grad[0][i,j]<0:
@@ -131,3 +131,24 @@ def div_norm(normal):
     #     for j in range(0,div.shape[1]): 
     #         div[i,j] -= k                               #justification?
     return div
+
+def find_centre(a,b,c):
+    x = (a[0]+b[0]+c[0])/3
+    y = (a[1]+b[1]+c[1])/3
+    z = (a[2]+b[2]+c[2])/3
+    return np.array([x,y,z])
+
+def find_normal(a,b,c):
+    v = b-a
+    w = c-a
+    normal = np.cross(v,w)
+    magnitude = np.sqrt(normal[0]**2+normal[1]**2+normal[2]**2)
+    return normal/magnitude
+    # return normal
+
+@jit
+def find_area(a,b,c):
+    x = [a[0],b[0],c[0]]
+    y = [a[1],b[1],c[1]]
+    shape = Polygon(zip(x,y))
+    return shape.area
