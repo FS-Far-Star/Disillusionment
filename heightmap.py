@@ -7,18 +7,19 @@ zv = 2*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
 max_diff = []
 for i in range(1,20):
     d = 1000*np.ones((xv.shape[0],xv.shape[1]))
-    d = np.subtract(d,zv)  #actual height
+    d = np.subtract(d,zv)                           #actual height
     normal = norm(xv,yv,spacing,d)
     div = div_norm(normal)                          #divergance of normal 
     #print(div)
     zv = solve_poisson(zv,div,poisson_requirement)
-    # zv -= np.sum(div)
-    zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter
-    #zv = zv*spacing     # is this even legal???
+    # zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter, except for refraction
+    #zv = zv*spacing     # is this even legal??? NO, but rather poisson solver was initially wrong
     max_diff.append((i,(np.max(zv)-np.min(zv))))
 
-    print(np.max(zv))
+    print('max',np.max(zv))
     # print(np.min(zv))
+
+zv -= np.min(zv)
 
 '''save data'''
 if testing == False:

@@ -1,4 +1,4 @@
-from basics import *
+from init import *
 
 if testing == False:
     xv = np.array(pd.read_csv('data/xv.csv',header=None))

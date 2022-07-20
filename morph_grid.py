@@ -1,4 +1,4 @@
-from basics import *
+from init import *
 from functions import *
 
 '''Coordinate system'''
@@ -60,6 +60,7 @@ for calculation in range(1,morph_grid_requirement+1):
             if yv[i,j] > yv[i+1,j]:
                 yv[i,j] = yv[i+1,j]
                 print('collision')
+    # And indeed it never happens
 
     data.append((calculation,np.sum(np.multiply(loss,loss))))
     step.append((calculation,step_size))

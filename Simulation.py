@@ -1,12 +1,11 @@
 import imp
-
-from numpy import average
 from loading import *
 from functions import *
 
 side = xv.shape[0]
 input = np.array([0,0,1])          #input light direction
 output = np.zeros((np_img.shape[0],np_img.shape[1]))
+counter = 0
 
 for i in range(0,side-1):                                 
     for j in range(0,side-1):
@@ -31,18 +30,14 @@ for i in range(0,side-1):
         offset = out*scale
         landing = abd_centre+offset
 
-        closest = landing//spacing
-        x = int(closest[1])
-        y = int(closest[0])
+        closest_abd = landing//spacing
+        x = int(closest_abd[1])
+        y = int(closest_abd[0])
         
-        if x > side-2:
-            x = side-2
-            print('out of bounds')
-        if y > side-2:
-            y = side-2
-            print('out of bounds')
-
-        output[x,y] += abd_area
+        if x > side-2 or y > side-2 or x < 0 or y < 0:
+            counter +=1
+        else: 
+            output[x,y] += abd_area
 
         # for surface defined by bcd
         bcd_centre = find_centre(b,c,d)
@@ -60,18 +55,14 @@ for i in range(0,side-1):
         offset = out*scale
         landing = bcd_centre+offset
 
-        closest = landing//spacing
-        x = int(closest[1])
-        y = int(closest[0])
+        closest_bcd = landing//spacing
+        x = int(closest_bcd[1])
+        y = int(closest_bcd[0])
 
-        if x > side-2:
-            x = side-2
-            print('out of bounds')
-        if y > side-2:
-            y = side-2
-            print('out of bounds')
-
-        output[x,y] += bcd_area
+        if x > side-2 or y > side-2 or x < 0 or y < 0:
+            counter +=1
+        else: 
+            output[x,y] += bcd_area
 
         # print('area',abd_area)
         # print('normal',normal)
@@ -81,6 +72,7 @@ for i in range(0,side-1):
         # print('out',out)
         # print('landing',landing)
         # print('closest',closest)
+print('faces out of bounds: ',counter)
 
 # max = np.max(output)
 # scale = 256/max
@@ -90,13 +82,22 @@ for i in range(0,side-1):
 
 sum = np.sum(output)
 average = sum/side**2
-scale = 128/average
+scale = 64/average
 output*=scale
+
+overwrite = 0
 for i in range(0,np_img.shape[0]):
     for j in range(0,np_img.shape[1]):
         if output[i,j]>256:
             output[i,j]=256
+            overwrite += 1
+print('overwrite',overwrite)
+
+output = np.rot90(output, 2)
 
 image = Image.fromarray(output)
+
+plt.imsave('Result.png', image, cmap='gray')
+
 image.show()
 print('complete')

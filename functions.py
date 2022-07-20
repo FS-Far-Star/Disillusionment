@@ -1,4 +1,4 @@
-from basics import *
+from init import *
 from shapely.geometry import Polygon
 import numba
 from numba import jit
@@ -93,14 +93,14 @@ def find_step_size(xv,yv,grad):
 
 
 #calculate the normal vectors of the mirror surface
-# def calc_norm(xv,yv,spacing_x,spacing_y,d):
+# def norm(xv,yv,spacing,d):
 #     normal = np.zeros((xv.shape[0],xv.shape[1],2))
 #     for i in range(0,xv.shape[0]):
 #         for j in range(0,xv.shape[1]):
-#             u = j*spacing_x
-#             v = i*spacing_y   #coordinates of pixels on the image plane
-#             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(n2-n1))
-#             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(n2-n1))
+#             u = j*spacing
+#             v = i*spacing   #coordinates of pixels on the image plane
+#             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(eta-n1))
+#             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(eta-n1))
 #     return normal
 
 def norm(xv,yv,spacing,d):
