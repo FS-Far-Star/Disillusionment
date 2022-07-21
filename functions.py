@@ -1,3 +1,4 @@
+from unicodedata import mirrored
 from init import *
 from shapely.geometry import Polygon
 import numba
@@ -39,16 +40,41 @@ def f(phi,i,j):
         b = j
     return(phi[a,b])
 
+# @jit   #the numpy grad is unfortunately too advanced
+# def calc_grad(arr,sp=spacing):
+#     left_right = np.flip(arr,1)
+#     top_bot = np.flip(arr,0)
+#     corner = np.flip(np.flip(arr,0),1)
+#     row1 = np.concatenate((corner,top_bot,corner),axis=1)
+#     row2 = np.concatenate((left_right,arr,left_right),axis=1)
+#     result = np.concatenate((row1,row2,row1),axis=0)
+#     side = arr.shape[0]
+#     grad_x, grad_y = np.zeros((side+1,side+1)) , np.zeros((side+1,side+1))
+#     for i in range(0,side+1):
+#         for j in range(0,side+1):
+#             grad_x[i,j] = (result[i,j+side]-result[i,j+side-1])/sp
+#             grad_y[i,j] = (result[i+side,j]-result[i+side-1,j])/sp
+#     grad = [grad_x,grad_y]
+#     return np.array(grad)
+
 @jit   #the numpy grad is unfortunately too advanced
-def calc_grad(phi,sp=spacing):
-    grad_x = np.zeros((phi.shape[0]+1,phi.shape[1]+1))
-    grad_y = np.zeros((phi.shape[0]+1,phi.shape[1]+1))
-    for i in range(0,phi.shape[0]+1):
-        for j in range(0,phi.shape[1]+1):
-            grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/sp
-            grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/sp
+def calc_grad(arr,sp=spacing):
+    left_right = np.flip(arr,1)
+    top_bot = np.flip(arr,0)
+    corner = np.flip(np.flip(arr,0),1)
+    row1 = np.concatenate((corner,top_bot,corner),axis=1)
+    row2 = np.concatenate((left_right,arr,left_right),axis=1)
+    result = np.concatenate((row1,row2,row1),axis=0)
+    side = arr.shape[0]
+    grad_x, grad_y = np.zeros((side+1,side+1)) , np.zeros((side+1,side+1))
+    for i in range(0,side+1):
+        for j in range(0,side+1):
+            a = i+side
+            b = j+side
+            grad_x[i,j] = (result[a,b]-result[a,b-1])/sp
+            grad_y[i,j] = (result[a,b]-result[a-1,b])/sp
     grad = [grad_x,grad_y]
-    return grad
+    return np.array(grad)
 
 @jit    #solve poisson with relaxation
 def solve_poisson(phi,loss,iteration,sp=spacing):
@@ -73,7 +99,7 @@ def calculate_loss(area_grid,brightness_comp):
 
 @jit    #find the maximum allowed step size, then divide by two
 def find_step_size(xv,yv,grad):
-    min_dt = 10000
+    min_dt = 1000000
     for i in range(1,xv.shape[0]-1):
         for j in range(1,xv.shape[1]-1):
             if grad[0][i,j]<0:
@@ -116,27 +142,27 @@ def find_step_size(xv,yv,grad):
 
 
 #calculate the normal vectors of the mirror surface
-# def norm(xv,yv,spacing,d):
-#     normal = np.zeros((xv.shape[0],xv.shape[1],2))
-#     for i in range(0,xv.shape[0]):
-#         for j in range(0,xv.shape[1]):
-#             u = j*spacing
-#             v = i*spacing   #coordinates of pixels on the image plane
-#             normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(eta-n1))
-#             normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(eta-n1))
-#     return normal
-
 def norm(xv,yv,spacing,d):
     normal = np.zeros((xv.shape[0],xv.shape[1],2))
-    for i in range(0,xv.shape[0]-1):
-        for j in range(0,xv.shape[1]-1):
+    for i in range(0,xv.shape[0]):
+        for j in range(0,xv.shape[1]):
             u = j*spacing
-            v = i*spacing
-            # q_p = (u-xv[i,j],v-yv[i,j])
-            squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
-            k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
-            normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
+            v = i*spacing   #coordinates of pixels on the image plane
+            normal[i,j,0] = np.tan((np.arctan((u-xv[i,j])/d[i,j]))/(eta-n1))
+            normal[i,j,1] = np.tan((np.arctan((v-yv[i,j])/d[i,j]))/(eta-n1))
     return normal
+
+# def norm(xv,yv,spacing,d):
+#     normal = np.zeros((xv.shape[0],xv.shape[1],2))
+#     for i in range(0,xv.shape[0]-1):
+#         for j in range(0,xv.shape[1]-1):
+#             u = j*spacing
+#             v = i*spacing
+#             # q_p = (u-xv[i,j],v-yv[i,j])
+#             squared = (u-xv[i,j]) * (u-xv[i,j]) + (v-yv[i,j]) * (v-yv[i,j])
+#             k = eta * np.sqrt(squared + d[i,j]**2) - d[i,j]
+#             normal[i,j] = (u-xv[i,j],v-yv[i,j])/k
+#     return normal
 
 def div_norm(normal):
     div = np.zeros([normal.shape[0],normal.shape[1]])

@@ -10,7 +10,7 @@ for i in range(1,20):
     d = np.subtract(d,zv)                           #actual height
     normal = norm(xv,yv,spacing,d)
     div = div_norm(normal)                          #divergance of normal 
-    #print(div)
+    assert round(np.sum(div),5) == 0
     zv = solve_poisson(zv,div,poisson_requirement)
     # zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter, except for refraction
     #zv = zv*spacing     # is this even legal??? NO, but rather poisson solver was initially wrong
@@ -31,17 +31,17 @@ else:
 
 # Plot heightmap, as color map or 3d height map
 
-fig4 = plt.figure()
-plt.plot(*zip(*max_diff))
+# fig4 = plt.figure()
+# plt.plot(*zip(*max_diff))
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(xv,yv,zv)
-plt.title('complete contour')
-plt.show()
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(xv,yv,zv)
+# plt.title('complete contour')
+# plt.show()
 
-points = np.c_[xv.reshape(-1), yv.reshape(-1), zv.reshape(-1)]
-cloud = pv.PolyData(points)
-surf = cloud.delaunay_2d()
-surf.plot(show_edges=True)
-print('complete')
+# points = np.c_[xv.reshape(-1), yv.reshape(-1), zv.reshape(-1)]
+# cloud = pv.PolyData(points)
+# surf = cloud.delaunay_2d()
+# surf.plot(show_edges=True)
+# print('complete')
