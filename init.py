@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 clear = lambda: os.system('cls')
 clear()
 
-name_of_file = 'images/cat_real.png'
+name_of_file = 'images/cat_50.png'
 #https://www.img2go.com/compress-image
 #image resize website
 
@@ -53,6 +53,8 @@ spacing = width/np_img.shape[0]   #for the sake of simplicity, the image used is
 '''Plotting Coordinate system'''
 x,y = np.linspace(0,width-spacing,np_img.shape[0]), np.linspace(0,height-spacing,np_img.shape[1])
 a,b = np.meshgrid(x,y)
+x,y = np.linspace(0,width,np_img.shape[0]+1), np.linspace(0,height,np_img.shape[1]+1)
+c,d = np.meshgrid(x,y)
 
 '''Calculate total area'''
 A_t = height*width  #total_area

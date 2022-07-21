@@ -41,10 +41,10 @@ def f(phi,i,j):
 
 @jit   #the numpy grad is unfortunately too advanced
 def calc_grad(phi,sp=spacing):
-    grad_x = np.zeros((phi.shape[0],phi.shape[1]))
-    grad_y = np.zeros((phi.shape[0],phi.shape[1]))
-    for i in range(0,phi.shape[0]-1):
-        for j in range(0,phi.shape[1]-1):
+    grad_x = np.zeros((phi.shape[0]+1,phi.shape[1]+1))
+    grad_y = np.zeros((phi.shape[0]+1,phi.shape[1]+1))
+    for i in range(0,phi.shape[0]+1):
+        for j in range(0,phi.shape[1]+1):
             grad_x[i,j] = (f(phi,i,j+1)-f(phi,i,j-1))/sp
             grad_y[i,j] = (f(phi,i+1,j)-f(phi,i-1,j))/sp
     grad = [grad_x,grad_y]
@@ -74,21 +74,44 @@ def calculate_loss(area_grid,brightness_comp):
 @jit    #find the maximum allowed step size, then divide by two
 def find_step_size(xv,yv,grad):
     min_dt = 10000
-    for i in range(1,xv.shape[0]-2):
-        for j in range(1,xv.shape[1]-2):
+    for i in range(1,xv.shape[0]-1):
+        for j in range(1,xv.shape[1]-1):
             if grad[0][i,j]<0:
                 s = (xv[i,j-1] - xv[i,j])/grad[0][i,j]
             if grad[0][i,j]>0:
                 s = (xv[i,j+1] - xv[i,j])/grad[0][i,j]
-            #print(s)
             min_dt = min(s,min_dt)
-    for i in range(1,yv.shape[0]-2):
-        for j in range(1,yv.shape[1]-2):
+
+    # for j in range(1,xv.shape[1]):
+    #     if grad[0][0,j]<0:
+    #         s = (xv[0,j-1] - xv[0,j])/grad[0][0,j]
+    #     if grad[0][0,j]>0:
+    #         s = (xv[0,j+1] - xv[0,j])/grad[0][0,j]
+    #     if grad[0][-1,j]<0:
+    #         s = (xv[-1,j-1] - xv[-1,j])/grad[0][-1,j]
+    #     if grad[0][-1,j]>0:
+    #         s = (xv[-1,j+1] - xv[-1,j])/grad[0][-1,j]
+    #     min_dt = min(s,min_dt)
+    
+    for i in range(1,yv.shape[0]-1):
+        for j in range(1,yv.shape[1]-1):
             if grad[1][i,j]<0:
                 s = (yv[i-1,j] - yv[i,j])/grad[1][i,j]
             if grad[1][i,j]>0:
                 s = (yv[i+1,j] - yv[i,j])/grad[1][i,j]
             min_dt = min(s,min_dt)
+
+    # for i in range(1,xv.shape[1]):
+    #     if grad[1][i,0]<0:
+    #         s = (yv[i-1,0] - yv[i,0])/grad[1][i,0]
+    #     if grad[1][i,0]>0:
+    #         s = (yv[i+1,0] - yv[i,0])/grad[1][i,0]
+    #     if grad[1][i,-1]<0:
+    #         s = (yv[i-1,-1] - yv[i,-1])/grad[1][i,-1]
+    #     if grad[1][i,-1]>0:
+    #         s = (yv[i+1,-1] - yv[i,-1])/grad[1][i,-1]
+    #     min_dt = min(s,min_dt)
+    
     return min_dt/2
 
 
@@ -124,12 +147,10 @@ def div_norm(normal):
             delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
             delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
             div[i,j] = (delta_x + delta_y)/spacing
-    # k = np.sum(div)/(np_img.shape[1]*np_img.shape[0])   #justification?
-    # # print('sum:',np.sum(div))
-    # # print('k=',k)
-    # for i in range(0,div.shape[0]):
-    #     for j in range(0,div.shape[1]): 
-    #         div[i,j] -= k                               #justification?
+    k = np.mean(div)
+    for i in range(0,div.shape[0]):
+        for j in range(0,div.shape[1]): 
+            div[i,j] -= k                               #justification?
     return div
 
 def find_centre(a,b,c):
