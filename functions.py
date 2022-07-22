@@ -40,31 +40,18 @@ def f(phi,i,j):
         b = j
     return(phi[a,b])
 
-# @jit   #the numpy grad is unfortunately too advanced
-# def calc_grad(arr,sp=spacing):
-#     left_right = np.flip(arr,1)
-#     top_bot = np.flip(arr,0)
-#     corner = np.flip(np.flip(arr,0),1)
-#     row1 = np.concatenate((corner,top_bot,corner),axis=1)
-#     row2 = np.concatenate((left_right,arr,left_right),axis=1)
-#     result = np.concatenate((row1,row2,row1),axis=0)
-#     side = arr.shape[0]
-#     grad_x, grad_y = np.zeros((side+1,side+1)) , np.zeros((side+1,side+1))
-#     for i in range(0,side+1):
-#         for j in range(0,side+1):
-#             grad_x[i,j] = (result[i,j+side]-result[i,j+side-1])/sp
-#             grad_y[i,j] = (result[i+side,j]-result[i+side-1,j])/sp
-#     grad = [grad_x,grad_y]
-#     return np.array(grad)
-
-@jit   #the numpy grad is unfortunately too advanced
-def calc_grad(arr,sp=spacing):
+def dupe(arr):
     left_right = np.flip(arr,1)
     top_bot = np.flip(arr,0)
     corner = np.flip(np.flip(arr,0),1)
     row1 = np.concatenate((corner,top_bot,corner),axis=1)
     row2 = np.concatenate((left_right,arr,left_right),axis=1)
     result = np.concatenate((row1,row2,row1),axis=0)
+    return result
+
+@jit   #the numpy grad is unfortunately too advanced
+def calc_grad(arr,sp=spacing):
+    result = dupe(arr)
     side = arr.shape[0]
     grad_x, grad_y = np.zeros((side+1,side+1)) , np.zeros((side+1,side+1))
     for i in range(0,side+1):
@@ -106,19 +93,7 @@ def find_step_size(xv,yv,grad):
                 s = (xv[i,j-1] - xv[i,j])/grad[0][i,j]
             if grad[0][i,j]>0:
                 s = (xv[i,j+1] - xv[i,j])/grad[0][i,j]
-            min_dt = min(s,min_dt)
-
-    # for j in range(1,xv.shape[1]):
-    #     if grad[0][0,j]<0:
-    #         s = (xv[0,j-1] - xv[0,j])/grad[0][0,j]
-    #     if grad[0][0,j]>0:
-    #         s = (xv[0,j+1] - xv[0,j])/grad[0][0,j]
-    #     if grad[0][-1,j]<0:
-    #         s = (xv[-1,j-1] - xv[-1,j])/grad[0][-1,j]
-    #     if grad[0][-1,j]>0:
-    #         s = (xv[-1,j+1] - xv[-1,j])/grad[0][-1,j]
-    #     min_dt = min(s,min_dt)
-    
+            min_dt = min(s,min_dt)    
     for i in range(1,yv.shape[0]-1):
         for j in range(1,yv.shape[1]-1):
             if grad[1][i,j]<0:
@@ -126,18 +101,6 @@ def find_step_size(xv,yv,grad):
             if grad[1][i,j]>0:
                 s = (yv[i+1,j] - yv[i,j])/grad[1][i,j]
             min_dt = min(s,min_dt)
-
-    # for i in range(1,xv.shape[1]):
-    #     if grad[1][i,0]<0:
-    #         s = (yv[i-1,0] - yv[i,0])/grad[1][i,0]
-    #     if grad[1][i,0]>0:
-    #         s = (yv[i+1,0] - yv[i,0])/grad[1][i,0]
-    #     if grad[1][i,-1]<0:
-    #         s = (yv[i-1,-1] - yv[i,-1])/grad[1][i,-1]
-    #     if grad[1][i,-1]>0:
-    #         s = (yv[i+1,-1] - yv[i,-1])/grad[1][i,-1]
-    #     min_dt = min(s,min_dt)
-    
     return min_dt/2
 
 
@@ -166,17 +129,20 @@ def norm(xv,yv,spacing,d):
 
 def div_norm(normal):
     div = np.zeros([normal.shape[0],normal.shape[1]])
-    nx = normal[:,:,0]
-    ny = normal[:,:,1]
-    for i in range(0,div.shape[0]):
-        for j in range(0,div.shape[1]):
-            delta_x = 0.5*(f(nx,i,j+1)-f(nx,i,j-1))
-            delta_y = 0.5*(f(ny,i+1,j)-f(ny,i-1,j))
-            div[i,j] = (delta_x + delta_y)/spacing
+    x = dupe(normal[:,:,0])
+    y = dupe(normal[:,:,1])
+    side = div.shape[0]
+    for i in range(0,side):
+        for j in range(0,side):
+            a = i+side
+            b = j+side
+            delta_x = (x[a,b]-x[a,b-1])/spacing
+            delta_y = (y[a,b]-y[a-1,b])/spacing
+            div[i,j] = delta_x + delta_y
     k = np.mean(div)
     for i in range(0,div.shape[0]):
         for j in range(0,div.shape[1]): 
-            div[i,j] -= k                               #justification?
+            div[i,j] -= k                               
     return div
 
 def find_centre(a,b,c):

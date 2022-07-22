@@ -2,24 +2,25 @@ from functions import *
 from loading import *
 
 '''calculate heightmap'''
-zv = 2*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
+guess = 2*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
 
 max_diff = []
 for i in range(1,20):
     d = 1000*np.ones((xv.shape[0],xv.shape[1]))
-    d = np.subtract(d,zv)                           #actual height
+    d = np.subtract(d,zv)                           #actual distance from exit surface to wall 
     normal = norm(xv,yv,spacing,d)
     div = div_norm(normal)                          #divergance of normal 
     assert round(np.sum(div),5) == 0
-    zv = solve_poisson(zv,div,poisson_requirement)
-    # zv -= np.min(zv)        # offset ok because neumann boundary condition, abs. height doesn't matter, except for refraction
-    #zv = zv*spacing     # is this even legal??? NO, but rather poisson solver was initially wrong
+    # As before, the input to the poisson solver needs to sum to zero
+
+    zv = solve_poisson(guess,div,poisson_requirement)
+    # You MUST NOT: 1. scale zv by a factor, as zv is determined by slopes
+    #               2. offshift zv by a constant, as distance from wall will be changed by this
+
     max_diff.append((i,(np.max(zv)-np.min(zv))))
-
-    print('max',np.max(zv))
+    # print('max',np.max(zv))
+    # print('min',np.min(zv))
     # print(np.min(zv))
-
-zv -= np.min(zv)
 
 '''save data'''
 if testing == False:
@@ -44,4 +45,4 @@ else:
 # cloud = pv.PolyData(points)
 # surf = cloud.delaunay_2d()
 # surf.plot(show_edges=True)
-# print('complete')
+print('complete')
