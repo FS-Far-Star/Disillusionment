@@ -2,6 +2,7 @@ import imp
 from loading import *
 from functions import *
 
+# zv = (zv-np.mean(zv))*2+np.mean(zv)
 side = xv.shape[0]
 input = np.array([0,0,1])          #input light direction
 output = np.zeros((np_img.shape[0],np_img.shape[1]))

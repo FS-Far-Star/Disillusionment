@@ -3,6 +3,7 @@ from loading import *
 
 '''calculate heightmap'''
 guess = 2*np.ones((xv.shape[0],xv.shape[1]))    #initial guess
+zv = guess
 
 max_diff = []
 for i in range(1,20):

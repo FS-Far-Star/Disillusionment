@@ -59,6 +59,7 @@ for calculation in range(1,morph_grid_requirement+1):
     delta_x = grad[0]*step_size                 
     delta_y = grad[1]*step_size
     if np.max(delta_x) < 1e-8 and np.max(delta_y) < 1e-8:
+        print('Step size too small, interrupted')
         break
 
     xv += delta_x            # gradient descend
@@ -108,9 +109,9 @@ else:
     print('collision:',collision_counter)
 
 # Plot loss as a color map, it is expected to be highly uniform
-fig1 = plt.figure()
-plt.pcolormesh(a,b,loss)
-plt.show()
+# fig1 = plt.figure()
+# plt.pcolormesh(a,b,loss)
+# plt.show()
 
 '''save data'''
 if testing == False:

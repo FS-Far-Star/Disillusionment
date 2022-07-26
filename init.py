@@ -17,7 +17,7 @@ clear = lambda: os.system('cls')
 clear()
 
 #-------------------------User input----------------------------------------------------------
-name_of_file = 'images/cat_real.png'
+name_of_file = 'images/cat_200.png'
 #https://www.img2go.com/compress-image
 #image resize website
 
@@ -29,7 +29,7 @@ thickness = 3   #mm, acrylic block thickness
 # Solving parameters
 poisson_requirement = 1000   #usually enough to converge
 sigma = 1.94                 #over-relaxation factor
-morph_grid_requirement = 200 #usually 100 is enough, depends on size though
+morph_grid_requirement = 100 #usually 100 is enough, depends on size though
 height_requirement = 3       #
 
 # Physics
