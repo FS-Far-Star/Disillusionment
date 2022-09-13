@@ -17,7 +17,7 @@ for calculation in range(1,morph_grid_requirement+1):
     #calculate area based on new coordinates, result is normalized
 
     loss = calculate_loss(area_grid,brightness_comp)
-    assert round(np.sum(loss),5) == 0
+    assert round(np.sum(loss),4) == 0
     # Note: 1. the input to the poisson solver, in this case loss, must sum to zero for solution to be stable
     #       2. From a geometric argument, if any of the shapes is not convex, or outer border is moved, then sum of 
     #          area grid will not be 1. If that happens, loss will not sum to zero. 
@@ -51,14 +51,14 @@ for calculation in range(1,morph_grid_requirement+1):
 
     step_size = find_step_size(xv,yv,grad)      
     # find appropriate step size so that points don't surpass ones with higher index
+    delta_x = grad[0]*step_size                 
+    delta_y = grad[1]*step_size
 
-    print(step_size)
+    print('step_size',step_size)
     if round(step_size,15) == 0:
         # if step size is too small, stop wasting time
         break
-    delta_x = grad[0]*step_size                 
-    delta_y = grad[1]*step_size
-    if np.max(delta_x) < 1e-8 and np.max(delta_y) < 1e-8:
+    elif np.max(delta_x) < 1e-8 and np.max(delta_y) < 1e-8:
         print('Step size too small, interrupted')
         break
 
@@ -99,7 +99,7 @@ for calculation in range(1,morph_grid_requirement+1):
                 # print('collision')
     # And indeed it never happens
 
-    print(round(calculation/morph_grid_requirement*100,2),'%','complete')
+    print(round(calculation/morph_grid_requirement*100,3),'%','complete')
     data.append((calculation,np.sum(np.multiply(loss,loss))))
     step.append((calculation,step_size))
 #----------------- end of iterations----------------

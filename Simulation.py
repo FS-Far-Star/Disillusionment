@@ -29,7 +29,7 @@ for i in range(0,side-1):
         assert round(dot_product, 10) == 0.0          # protection
         out_orth = eta*orthogonal
         out = out_orth+parallel
-        distance_to_go = 1000 - abd_centre[2]
+        distance_to_go = proj_distance - abd_centre[2]
         scale = distance_to_go/out[2]
         offset = out*scale
         landing = abd_centre+offset
@@ -54,7 +54,7 @@ for i in range(0,side-1):
         assert round(dot_product, 10) == 0.0          # protection
         out_orth = eta*orthogonal
         out = out_orth+parallel
-        distance_to_go = 1000 - bcd_centre[2]
+        distance_to_go = proj_distance - bcd_centre[2]
         scale = distance_to_go/out[2]
         offset = out*scale
         landing = bcd_centre+offset

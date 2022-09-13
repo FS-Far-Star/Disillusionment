@@ -17,7 +17,7 @@ clear = lambda: os.system('cls')
 clear()
 
 #-------------------------User input----------------------------------------------------------
-name_of_file = 'images/subject1_real.jpg'
+name_of_file = 'images/Tea_250.jpg'
 #https://www.img2go.com/compress-image
 #image resize website
 
@@ -25,16 +25,17 @@ name_of_file = 'images/subject1_real.jpg'
 height = 100    #mm, acrylic block height
 width = 100    #mm, acrylic block width
 thickness = 3   #mm, acrylic block thickness
+proj_distance = 400     #mm, projection distance
 
 # Solving parameters
 poisson_requirement = 1000   #usually enough to converge
 sigma = 1.94                 #over-relaxation factor
-morph_grid_requirement = 100 #usually 100 is enough, depends on size though
-height_requirement = 3       #
+morph_grid_requirement = 600 #usually 100 is enough, depends on size though
+# height_requirement = 3       #
 
 # Physics
 n1 = 1          # refractive indice of air   
-eta = 1.48899    # refractive indice of acrylic block
+eta = 1.49    # refractive indice of acrylic block
 
 #-------------------------Basic operations----------------------------------------------------------
 if 'real' in name_of_file:
