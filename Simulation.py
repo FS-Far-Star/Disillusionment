@@ -1,6 +1,9 @@
 import imp
 from loading import *
 from functions import *
+import random
+
+error = True
 
 # zv = (zv-np.mean(zv))*2+np.mean(zv)
 side = xv.shape[0]
@@ -13,11 +16,16 @@ record = []
 
 for i in range(0,side-1):                                 
     for j in range(0,side-1):
-        a = np.array([xv[i,j],yv[i,j],zv[i,j]])
-        b = np.array([xv[i+1,j],yv[i+1,j],zv[i+1,j]])
-        c = np.array([xv[i+1,j+1],yv[i+1,j+1],zv[i+1,j+1]])
-        d = np.array([xv[i,j+1],yv[i,j+1],zv[i,j+1]])
-
+        if error == False:
+            a = np.array([xv[i,j],yv[i,j],zv[i,j]])
+            b = np.array([xv[i+1,j],yv[i+1,j],zv[i+1,j]])
+            c = np.array([xv[i+1,j+1],yv[i+1,j+1],zv[i+1,j+1]])
+            d = np.array([xv[i,j+1],yv[i,j+1],zv[i,j+1]])
+        elif error == True:
+            a = np.array([xv[i,j],yv[i,j],zv[i,j]]) + [random.uniform(0, 10)/1000,random.uniform(0, 10)/1000,random.uniform(0, 10)/1000]
+            b = np.array([xv[i+1,j],yv[i+1,j],zv[i+1,j]]) + [random.uniform(0, 10)/1000,random.uniform(0, 10)/1000,random.uniform(0, 10)/1000]
+            c = np.array([xv[i+1,j+1],yv[i+1,j+1],zv[i+1,j+1]]) + [random.uniform(0, 10)/1000,random.uniform(0, 10)/1000,random.uniform(0, 10)/1000]
+            d = np.array([xv[i,j+1],yv[i,j+1],zv[i,j+1]]) + [random.uniform(0, 10)/1000,random.uniform(0, 10)/1000,random.uniform(0, 10)/1000]
         # for surface defined by abd
         abd_centre = find_centre(a,b,d)
         abd_area = find_area(a,b,d)         #projected area

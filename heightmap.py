@@ -8,9 +8,9 @@ zv = guess
 max_diff = []
 for i in range(1,40):
     d = proj_distance*np.ones((xv.shape[0],xv.shape[1]))      # projection distance is specified in init
-    d = np.subtract(d,zv)                           #actual distance from exit surface to wall 
+    d = np.subtract(d,zv)                                     # actual distance from exit surface to wall 
     normal = norm(xv,yv,spacing,d)
-    div = div_norm(normal)                          #divergance of normal 
+    div = div_norm(normal)                                    # divergance of normal 
     assert round(np.sum(div),5) == 0
     # As before, the input to the poisson solver needs to sum to zero
 

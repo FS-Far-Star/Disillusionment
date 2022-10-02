@@ -16,6 +16,30 @@ def area(i,j,xv,yv):
     shape = Polygon(zip(x, y))
     return shape.area
 
+# @jit    #cost function
+# def cost(a,b):
+#     if a.shape != b.shape:
+#         return  'the inputs do not have the same dimensions'
+#     else: 
+#         c = a-b
+#         return np.sum(np.multiply(c,c))
+
+@jit    #built-in neunmann boundary condition
+def f(phi,i,j): 
+    if i == -1:
+        a = 1
+    elif i == phi.shape[0]:
+        a = phi.shape[0]-2
+    else:
+        a = i
+    if j == -1:
+        b = 1
+    elif j == phi.shape[1]:
+        b = phi.shape[1]-2
+    else:
+        b = j
+    return(phi[a,b])
+
 def dupe(arr):
     left_right = np.flip(arr,1)
     top_bot = np.flip(arr,0)

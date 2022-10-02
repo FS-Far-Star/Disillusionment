@@ -55,10 +55,10 @@ for calculation in range(1,morph_grid_requirement+1):
     delta_y = grad[1]*step_size
 
     print('step_size',step_size)
-    if round(step_size,15) == 0:
+    if round(step_size,8) == 0:
         # if step size is too small, stop wasting time
         break
-    elif np.max(delta_x) < 1e-8 and np.max(delta_y) < 1e-8:
+    elif np.max(delta_x) < 1e-6 and np.max(delta_y) < 1e-6:
         print('Step size too small, interrupted')
         break
 

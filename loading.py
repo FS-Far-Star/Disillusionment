@@ -24,3 +24,5 @@ else:
         zv = np.array(pd.read_csv('testing_data/zv.csv',header=None))
     else:
         zv= []
+
+# print(np.max(zv)-np.min(zv))
