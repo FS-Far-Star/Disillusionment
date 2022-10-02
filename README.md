@@ -3,6 +3,7 @@ This project aims to produce acrylic lens that cast shadow patterns that imitate
 
 Links as followed: 
 https://mattferraro.dev/posts/caustics-engineering
+
 http://nishitalab.org/user/egaku/tog14/yue-continuous-caustics-lens.pdf
 
 Currently unfinished. Only square image inputs at the moment. 
