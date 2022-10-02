@@ -21,8 +21,13 @@ plt.plot(np.transpose(xv)[::ps,::ps],np.transpose(yv)[::ps,::ps],linewidth=lw)
 ax = plt.gca() 
 ax.set_aspect(1)
 
+<<<<<<< HEAD
 # fig_img = plt.figure()
 # plt.imshow(img,cmap='gray')
+=======
+fig_img = plt.figure()
+plt.imshow(np_img,cmap='gray')
+>>>>>>> parent of b237432 (Merge branch 'main' of https://github.com/FS-Far-Star/Disillusionment)
 
 #-----Plot step size and error
 fig4 = plt.figure()
