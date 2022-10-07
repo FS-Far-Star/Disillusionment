@@ -3,9 +3,11 @@ from loading import *
 from functions import *
 import random
 
-error = True
+error = False
 
-# zv = (zv-np.mean(zv))*2+np.mean(zv)
+k = np.mean(zv)
+zv = (zv-k)*1.5+k
+print('max_diff',np.max(zv)-np.min(zv))
 side = xv.shape[0]
 input = np.array([0,0,1])          #input light direction
 output = np.zeros((np_img.shape[0],np_img.shape[1]))

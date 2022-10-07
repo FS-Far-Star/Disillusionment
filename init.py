@@ -17,7 +17,7 @@ clear = lambda: os.system('cls')
 clear()
 
 #-------------------------User input----------------------------------------------------------
-name_of_file = 'images/protoss_invert.png'
+name_of_file = 'images/protoss_invert_small.png'
 #https://www.img2go.com/compress-image
 #image resize website
 

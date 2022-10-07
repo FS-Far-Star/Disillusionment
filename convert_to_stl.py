@@ -4,7 +4,8 @@ from loading import *
 import numpy as np
 from stl import mesh
 
-# zv = (zv-np.mean(zv))*2+np.mean(zv)
+k = np.mean(zv)
+zv = (zv-k)*1.5+k
 
 side = xv.shape[0]
 def find(i,j):

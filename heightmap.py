@@ -15,8 +15,8 @@ for i in range(1,40):
     # As before, the input to the poisson solver needs to sum to zero
 
     zv = solve_poisson(guess,div,poisson_requirement)
-    # You MUST NOT: scale zv by a factor, as zv is determined by slopes
-    # You CAN ?   : offshift zv by a constant, but this have a physical meaning
+    # MUST NOT: scale zv by a factor, as zv is determined by slopes
+    # CAN ?   : offshift zv by a constant, but this have a physical meaning
 
     max_diff.append((i,(np.max(zv)-np.min(zv))))
     # print('max',np.max(zv))
