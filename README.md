@@ -1,4 +1,7 @@
 # Disillusionment
+
+12/18/2022: I am currently updating the project to mostly C++ to reduce computation time. Will update README.md when finished. 
+
 This project aims to produce acrylic lens that cast shadow patterns that imitate images. The project is largely based on ["Hiding Images in Plain Sight: The Physics Of Magic Windows"](https://mattferraro.dev/posts/caustics-engineering) by Matt Ferraro and "["Poisson-Based Continuous Surface Generation for Goal-Based Caustics"](http://nishitalab.org/user/egaku/tog14/yue-continuous-caustics-lens.pdf)" by Yue et al.
 
 Only square image inputs are allowed at the moment. The results of this projects are concluded in a report [here](https://github.com/FS-Far-Star/Disillusionment/blob/main/Caustics_project.pdf). 
