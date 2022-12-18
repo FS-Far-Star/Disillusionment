@@ -13,18 +13,18 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #clear eveyrthing
-clear = lambda: os.system('cls')
-clear()
+# clear = lambda: os.system('cls')
+# clear()
 
 #-------------------------User input----------------------------------------------------------
-name_of_file = 'images/protoss_invert_small.png'
+name_of_file = 'images/cake.jpg'
 #https://www.img2go.com/compress-image
 #image resize website
 
 # Real world parameters
 height = 100    #mm, acrylic block height
 width = 100    #mm, acrylic block width
-thickness = 3   #mm, acrylic block thickness
+thickness = 6   #mm, acrylic block thickness
 proj_distance = 200     #mm, projection distance
 
 # Solving parameters
@@ -38,10 +38,10 @@ n1 = 1          # refractive indice of air
 eta = 1.49    # refractive indice of acrylic block
 
 #-------------------------Basic operations----------------------------------------------------------
-if 'real' in name_of_file:
-    testing = False
-else:
-    testing = True
+# if 'real' in name_of_file:
+#     testing = False
+# else:
+#     testing = True
 # This system is in place so that data for the large file can be stored and untouched, while testing can be done with smaller files
 
 '''read image'''

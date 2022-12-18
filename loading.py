@@ -1,5 +1,21 @@
 from init import *
 
+k = pd.read_excel('testing_data/1.xlsx','Sheet1')
+k = np.array(k)
+print(k)
+a = k[:,1]
+b =[]
+for i in a:
+    # print(type(i),i)
+    if type(i) == int:
+        b.append(i)
+# print(b)
+plt.hist(b,6)
+plt.title('Pit size distribution for 775C, 30 seconds')
+plt.xlabel('Diameter/nm')
+plt.ylabel('Number')
+plt.show()
+
 if testing == False:
     xv = np.array(pd.read_csv('data/xv.csv',header=None))
     yv = np.array(pd.read_csv('data/yv.csv',header=None))

@@ -110,6 +110,7 @@ sum = np.sum(output)
 average = sum/side**2
 scale = 64/average
 output*=scale
+print('scaling',scale)
 
 overwrite = 0
 for i in range(0,np_img.shape[0]):
