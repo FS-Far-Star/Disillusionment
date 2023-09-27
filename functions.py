@@ -64,11 +64,31 @@ def calc_grad(arr,sp=spacing):
     return np.array(grad)
 
 @jit    #solve poisson with relaxation
-def solve_poisson(phi,loss,iteration,sp=spacing):
-    for iteration in range(0,iteration):
-        for i in range(0,phi.shape[0]):
-            for j in range(0,phi.shape[1]):
-                phi[i,j] = (1-sigma)*f(phi,i,j)+sigma/4*(f(phi,i-1,j)+f(phi,i+1,j)+f(phi,i,j-1)+f(phi,i,j+1)-loss[i,j]*sp**2)
+def solve_poisson(phi,loss,iteration,dx=spacing,dy=spacing,tolerance=1e-9):
+	max_change = 100
+    i = 0
+	while i < iteration and max_change>tolerance:
+		phi_old = phi
+		# center
+		phi[1:-1,1:-1] = (dy**2*(phi_old[1:-1,2:]+phi_old[1:-1,:-2])+dx**2*(phi_old[:-2,1:-1]+phi_old[2:,1:-1])+(dx*dy)**2*loss[2:nx,2:ny])/(2*(dx**2+dy**2))
+		# left edge
+		phi[0,1:-1] = (dy**2*(phi_old[0,2:]+phi_old[0,:-2])+dx**2*(phi_old[1,1:-1]*2)+(dx*dy)**2*loss[0,1:-1])/(2*(dx**2+dy**2))
+		# right edge
+		phi[-1,1:-1] = (dy**2*(phi_old[-1,2:]+phi_old[-1,:-2])+dx**2*(phi_old[-2,1:-1]*2)+(dx*dy)**2*loss[-1,1:-1])/(2*(dx**2+dy**2))
+		# top edge
+		phi[1:-1,0] = (dy**2*(phi_old[1:-1,1]*2)+dx**2*(phi_old[:-2,0]+phi_old[2:,0])+(dx*dy)**2*loss[1:-1,0])/(2*(dx**2+dy**2))
+		# bottom edge
+		phi[1:-1,-1] = (dy**2*(phi_old[1:-1,-2]*2)+dx**2*(phi_old[:-2,-1]+phi_old[2:,-1])+(dx*dy)**2*loss[1:-1,-1])/(2*(dx**2+dy**2))
+		# top left corner
+		phi[0,0] = (dy**2*(phi_old[0,1]*2)+dx**2*(phi_old[1,0]*2)+(dx*dy)**2*loss[0,0])/(2*(dx**2+dy**2))
+		# top right corner
+		phi[-1,0] = (dy**2*(phi_old[-1,1]*2)+dx**2*(phi_old[-2,0]*2)+(dx*dy)**2*loss[-1,0])/(2*(dx**2+dy**2))
+		# bottom left corner
+		phi[0,-1] = (dy**2*(phi_old[0,-2]*2)+dx**2*(phi_old[1,-1]*2)+(dx*dy)**2*loss[0,-1])/(2*(dx**2+dy**2))
+		# bottom right corner
+		phi[-1,-1] = (dy**2*(phi_old[-1,-2]*2)+dx**2*(phi_old[-2,-1]*2)+(dx*dy)**2*loss[-1,-1])/(2*(dx**2+dy**2))
+		max_change = (phi-phi_old).max()
+        i += 1
     return phi
 
 @jit    # update area of every grid
