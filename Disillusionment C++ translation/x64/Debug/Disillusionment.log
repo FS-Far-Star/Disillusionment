@@ -1,7 +1,0 @@
-﻿  main.cpp
-D:\GitHub\Disillusionment\Disillusionment\functions.h(22,10): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-D:\GitHub\Disillusionment\Disillusionment\main.cpp(19,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\GitHub\Disillusionment\Disillusionment\main.cpp(24,18): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\GitHub\Disillusionment\Disillusionment\main.cpp(59,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\GitHub\Disillusionment\Disillusionment\functions.h(28): warning C4715: 'area': not all control paths return a value
-  Disillusionment.vcxproj -> D:\GitHub\Disillusionment\Disillusionment\x64\Debug\Disillusionment.exe
